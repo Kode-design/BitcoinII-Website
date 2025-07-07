@@ -7,21 +7,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
             color: #e5e5e5;
             overflow-x: hidden;
         }
+        .spotlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(247, 147, 26, 0.1) 0%, rgba(247, 147, 26, 0) 70%);
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+            transition: background 0.2s ease;
+        }
         .glass-effect {
-            background: rgba(17, 17, 17, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .hero-gradient {
-            background: radial-gradient(ellipse at top, rgba(247, 147, 26, 0.15) 0%, rgba(10, 10, 10, 0) 50%);
+            background: radial-gradient(ellipse at 50% 0%, rgba(247, 147, 26, 0.2) 0%, rgba(10, 10, 10, 0) 50%);
             position: relative;
         }
         #particle-canvas {
@@ -37,14 +51,15 @@
             z-index: 1;
         }
         .btn-primary {
-            background-color: #f7931a;
-            color: #0a0a0a;
-            transition: all 0.3s ease;
+            background-image: linear-gradient(to right, #f7931a, #f9a84a);
+            color: #1a1a1a;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: none;
         }
         .btn-primary:hover {
-            background-color: #f8a33a;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(247, 147, 26, 0.2);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(247, 147, 26, 0.25);
         }
         .btn-secondary {
             background-color: transparent;
@@ -55,30 +70,34 @@
         .btn-secondary:hover {
             background-color: #f7931a;
             color: #0a0a0a;
+            box-shadow: 0 0 20px rgba(247, 147, 26, 0.4);
         }
-        .feature-card, .stat-card {
+        .feature-card {
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
         }
         .feature-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
             border-color: #f7931a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .roadmap-item::before {
-            content: '';
+        .roadmap-line {
             position: absolute;
             left: 1.25rem;
             top: 1.25rem;
-            bottom: -1.25rem;
             width: 2px;
             background-color: rgba(255, 255, 255, 0.2);
             z-index: -1;
+            height: calc(100% - 2.5rem);
         }
-        .roadmap-item:last-child::before {
-            display: none;
+        .roadmap-line-progress {
+            width: 100%;
+            background-image: linear-gradient(to bottom, #f7931a, #f9a84a);
+            height: 0;
+            transition: height 1s ease-out;
         }
         .roadmap-dot {
-            background-color: #f7931a;
+            background-image: linear-gradient(to bottom, #f7931a, #f9a84a);
         }
         /* Mobile Menu Styling */
         .mobile-nav {
@@ -98,24 +117,49 @@
             opacity: 1;
             transform: translateY(0);
         }
+        #coin-canvas {
+            width: 300px !important;
+            height: 300px !important;
+            cursor: grab;
+        }
+        #coin-canvas:active {
+            cursor: grabbing;
+        }
+        .hero-title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInWord 0.5s forwards;
+        }
+        @keyframes fadeInWord {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .cta-section {
+            background: linear-gradient(45deg, rgba(247, 147, 26, 0.1), rgba(247, 147, 26, 0.05) 50%, rgba(10,10,10,0) 100%), #111;
+        }
     </style>
 </head>
 <body class="antialiased">
+    <div class="spotlight"></div>
 
     <!-- Header -->
     <header class="fixed w-full top-0 z-50 glass-effect">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white z-50">
-                <i class="fas fa-bolt text-amber-500"></i> Bitcoin II
+            <a href="#" class="text-2xl font-bold text-white z-50 flex items-center space-x-2">
+                <i class="fas fa-rocket text-amber-500"></i>
+                <span>Bitcoin II</span>
             </a>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#about" class="text-gray-300 hover:text-amber-500 transition">About</a>
-                <a href="#features" class="text-gray-300 hover:text-amber-500 transition">Features</a>
-                <a href="#roadmap" class="text-gray-300 hover:text-amber-500 transition">Roadmap</a>
+                <a href="#about" class="text-gray-300 hover:text-amber-500 transition">Discover</a>
+                <a href="#features" class="text-gray-300 hover:text-amber-500 transition">Tech</a>
+                <a href="#roadmap" class="text-gray-300 hover:text-amber-500 transition">Journey</a>
                 <a href="#community" class="text-gray-300 hover:text-amber-500 transition">Community</a>
             </div>
             <a href="wallet.html" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
-                Download Wallet
+                Get Wallet
             </a>
             <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
                 <i id="menu-icon" class="fas fa-bars text-2xl"></i>
@@ -125,12 +169,12 @@
 
     <!-- Mobile Navigation -->
     <div id="mobile-menu" class="mobile-nav fixed top-0 right-0 h-full w-full sm:w-64 glass-effect z-40 pt-24 p-8">
-        <a href="#about" class="block text-white text-lg py-3 hover:text-amber-500 transition">About</a>
-        <a href="#features" class="block text-white text-lg py-3 hover:text-amber-500 transition">Features</a>
-        <a href="#roadmap" class="block text-white text-lg py-3 hover:text-amber-500 transition">Roadmap</a>
+        <a href="#about" class="block text-white text-lg py-3 hover:text-amber-500 transition">Discover</a>
+        <a href="#features" class="block text-white text-lg py-3 hover:text-amber-500 transition">Tech</a>
+        <a href="#roadmap" class="block text-white text-lg py-3 hover:text-amber-500 transition">Journey</a>
         <a href="#community" class="block text-white text-lg py-3 hover:text-amber-500 transition">Community</a>
         <a href="wallet.html" class="mt-6 block btn-primary text-center font-bold py-3 px-6 rounded-lg">
-            Download Wallet
+            Get Wallet
         </a>
     </div>
 
@@ -138,22 +182,22 @@
     <main class="hero-gradient pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
         <canvas id="particle-canvas"></canvas>
         <div class="container mx-auto px-6 text-center hero-content">
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6">
-                The Evolution of Digital Freedom.
-                <span class="block text-amber-500">Welcome to Bitcoin II.</span>
+            <h1 class="hero-title text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6">
+                Your Financial Playground,
+                <span class="block text-amber-500">Reimagined.</span>
             </h1>
             <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-10">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>
             <div class="flex justify-center space-x-4">
-                <a href="wallet.html" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">Get Started</a>
-                <a href="#about" class="btn-secondary font-bold py-3 px-8 rounded-lg text-lg">Learn More</a>
+                <a href="wallet.html" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">Join the Future</a>
+                <a href="#about" class="btn-secondary font-bold py-3 px-8 rounded-lg text-lg">Learn How</a>
             </div>
         </div>
     </main>
 
     <!-- Live Stats Section -->
-    <section id="stats" class="py-12 bg-black bg-opacity-20">
+    <section id="stats" class="py-12">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div class="stat-card p-4 rounded-lg glass-effect scroll-reveal">
@@ -180,17 +224,17 @@
     <section id="about" class="py-20 scroll-reveal">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-white">A New Era for Decentralized Finance</h2>
+                <h2 class="text-4xl font-bold text-white">Built for Speed, Designed for You</h2>
                 <p class="text-gray-400 mt-4 max-w-2xl mx-auto">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h3 class="text-3xl font-bold text-white mb-4">Our Philosophy</h3>
+                    <h3 class="text-3xl font-bold text-white mb-4">The BII Philosophy</h3>
                     <p class="text-gray-400 mb-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Phasellus egestas tellus rutrum tellus pellentesque eu. Amet consectetur adipiscing elit duis tristique. Viverra justo nec ultrices dui sapien eget mi proin sed. </p>
                     <p class="text-gray-400">Pulvinar elementum integer enim neque volutpat ac tincidunt. Nunc sed velit dignissim sodales ut eu sem integer. Bibendum est ultricies integer quis auctor elit sed vulputate mi.</p>
                 </div>
-                <div class="p-8 rounded-2xl glass-effect">
-                    <img src="https://placehold.co/600x400/1a1a1a/f7931a?text=BII+Network" alt="Bitcoin II Network" class="rounded-lg shadow-2xl">
+                <div class="flex justify-center items-center p-8">
+                    <canvas id="coin-canvas"></canvas>
                 </div>
             </div>
         </div>
@@ -200,16 +244,16 @@
     <section id="features" class="py-20 bg-black bg-opacity-20 scroll-reveal">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-white">Advanced Features</h2>
+                <h2 class="text-4xl font-bold text-white">Next-Gen Features</h2>
                 <p class="text-gray-400 mt-4 max-w-2xl mx-auto">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
             </div>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-shield-halved"></i></div><h3 class="text-2xl font-bold text-white mb-3">Enhanced Security</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
-                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 100ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-bolt-lightning"></i></div><h3 class="text-2xl font-bold text-white mb-3">Lightning Fast</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
-                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 200ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-globe"></i></div><h3 class="text-2xl font-bold text-white mb-3">Decentralized Core</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
-                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 300ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-users"></i></div><h3 class="text-2xl font-bold text-white mb-3">Community Governed</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
-                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 400ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-layer-group"></i></div><h3 class="text-2xl font-bold text-white mb-3">Scalable Architecture</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
-                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 500ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-leaf"></i></div><h3 class="text-2xl font-bold text-white mb-3">Low Energy Consumption</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
+                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-user-shield"></i></div><h3 class="text-2xl font-bold text-white mb-3">Ironclad Security</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
+                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 100ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-fighter-jet"></i></div><h3 class="text-2xl font-bold text-white mb-3">Warp Speed</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
+                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 200ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-infinity"></i></div><h3 class="text-2xl font-bold text-white mb-3">Truly Decentralized</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
+                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 300ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-people-arrows"></i></div><h3 class="text-2xl font-bold text-white mb-3">Power to the People</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
+                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 400ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-sitemap"></i></div><h3 class="text-2xl font-bold text-white mb-3">Infinitely Scalable</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
+                <div class="p-8 rounded-2xl feature-card glass-effect scroll-reveal" style="transition-delay: 500ms;"><div class="text-4xl text-amber-500 mb-4"><i class="fas fa-seedling"></i></div><h3 class="text-2xl font-bold text-white mb-3">Eco-Friendly</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p></div>
             </div>
         </div>
     </section>
@@ -218,23 +262,36 @@
     <section id="roadmap" class="py-20 scroll-reveal">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-white">Our Roadmap</h2>
+                <h2 class="text-4xl font-bold text-white">Our Epic Journey</h2>
                 <p class="text-gray-400 mt-4 max-w-2xl mx-auto">A transparent look into the future of Bitcoin II and our planned milestones.</p>
             </div>
-            <div class="relative max-w-2xl mx-auto">
-                <div class="roadmap-item pl-16 pb-16 relative"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-flag text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q3 2025: Project Inception</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Consequat nisl vel pretium lectus quam id leo in. Dictum non consectetur a erat nam at lectus.</p></div>
-                <div class="roadmap-item pl-16 pb-16 relative"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-network-wired text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q4 2025: Mainnet Launch</h3><p class="text-gray-400">Nunc eget lorem dolor sed viverra ipsum. Diam maecenas sed enim ut sem viverra. Faucibus pulvinar elementum integer enim neque volutpat ac.</p></div>
-                <div class="roadmap-item pl-16 pb-16 relative"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-wallet text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q1 2026: Wallet & Exchange Listings</h3><p class="text-gray-400">Risus commodo viverra maecenas accumsan lacus vel. Tellus in metus vulputate eu scelerisque felis imperdiet proin. At quis risus sed vulputate odio ut.</p></div>
-                <div class="roadmap-item pl-16 relative"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-cogs text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q2 2026: Governance & dApp Integration</h3><p class="text-gray-400">Eget nunc scelerisque viverra mauris in aliquam sem. Egestas erat imperdiet sed euismod nisi porta lorem mollis. Vitae purus faucibus ornare suspendisse.</p></div>
+            <div id="roadmap-container" class="relative max-w-2xl mx-auto">
+                <div class="roadmap-line"><div id="roadmap-line-progress" class="roadmap-line-progress"></div></div>
+                <div class="relative pl-16 pb-16"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-lightbulb text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q3 2025: The Big Idea</h3><p class="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Consequat nisl vel pretium lectus quam id leo in. Dictum non consectetur a erat nam at lectus.</p></div>
+                <div class="relative pl-16 pb-16"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-cogs text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q4 2025: Mainnet Ignition</h3><p class="text-gray-400">Nunc eget lorem dolor sed viverra ipsum. Diam maecenas sed enim ut sem viverra. Faucibus pulvinar elementum integer enim neque volutpat ac.</p></div>
+                <div class="relative pl-16 pb-16"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-wallet text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q1 2026: Wallets & Listings</h3><p class="text-gray-400">Risus commodo viverra maecenas accumsan lacus vel. Tellus in metus vulputate eu scelerisque felis imperdiet proin. At quis risus sed vulputate odio ut.</p></div>
+                <div class="relative pl-16"><div class="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full roadmap-dot shadow-lg"><i class="fas fa-satellite-dish text-black"></i></div><h3 class="text-2xl font-bold text-amber-500 mb-2">Q2 2026: The dApp Universe</h3><p class="text-gray-400">Eget nunc scelerisque viverra mauris in aliquam sem. Egestas erat imperdiet sed euismod nisi porta lorem mollis. Vitae purus faucibus ornare suspendisse.</p></div>
             </div>
         </div>
     </section>
     
-    <!-- Community Section -->
-    <section id="community" class="py-20 bg-black bg-opacity-20 scroll-reveal">
+    <!-- CTA Section -->
+    <section id="cta" class="py-20 cta-section scroll-reveal">
         <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold text-white">Join Our Community</h2>
-            <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">Become part of the Bitcoin II revolution. Connect with the team and other enthusiasts across our social platforms.</p>
+            <h2 class="text-4xl font-bold text-white">Ready to Get Involved?</h2>
+            <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">The future is in your hands. Download the wallet, join the conversation, and become a part of the next financial revolution.</p>
+            <div class="flex justify-center space-x-4">
+                <a href="wallet.html" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">Download Wallet</a>
+                <a href="#community" class="btn-secondary font-bold py-3 px-8 rounded-lg text-lg">Join Community</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community" class="py-20 scroll-reveal">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold text-white">The Power of Community</h2>
+            <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">Bitcoin II is nothing without its people. Connect, collaborate, and build with us across our social platforms.</p>
             <div class="flex justify-center items-center space-x-6 md:space-x-8">
                 <a href="#" class="text-gray-400 hover:text-amber-500 transition-transform duration-300 transform hover:scale-110"><i class="fab fa-discord text-5xl"></i></a>
                 <a href="#" class="text-gray-400 hover:text-amber-500 transition-transform duration-300 transform hover:scale-110"><i class="fab fa-twitter text-5xl"></i></a>
@@ -254,6 +311,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // --- Spotlight Effect ---
+            const spotlight = document.querySelector('.spotlight');
+            window.addEventListener('mousemove', (e) => {
+                spotlight.style.left = `${e.clientX}px`;
+                spotlight.style.top = `${e.clientY}px`;
+            });
+
             // --- Mobile Menu ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
@@ -261,16 +325,10 @@
             
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('open');
-                if (mobileMenu.classList.contains('open')) {
-                    menuIcon.classList.remove('fa-bars');
-                    menuIcon.classList.add('fa-times');
-                } else {
-                    menuIcon.classList.remove('fa-times');
-                    menuIcon.classList.add('fa-bars');
-                }
+                menuIcon.classList.toggle('fa-bars');
+                menuIcon.classList.toggle('fa-times');
             });
 
-            // Close mobile menu when a link is clicked
             document.querySelectorAll('#mobile-menu a').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.remove('open');
@@ -279,20 +337,27 @@
                 });
             });
 
+            // --- Hero Title Animation ---
+            const heroTitle = document.querySelector('.hero-title');
+            const words = heroTitle.innerText.split(' ');
+            heroTitle.innerHTML = words.map((word, index) => `<span style="animation-delay: ${index * 0.1}s">${word}</span>`).join(' ');
+
             // --- Scroll Animations ---
             const scrollObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
-                        
-                        // Animate numbers if the element is a stat card
                         const numberElements = entry.target.querySelectorAll('.animate-number');
                         numberElements.forEach(el => animateNumber(el));
+                        
+                        if (entry.target.id === 'roadmap') {
+                            animateRoadmapLine();
+                        }
 
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1 });
+            }, { threshold: 0.2 });
 
             document.querySelectorAll('.scroll-reveal').forEach(el => {
                 scrollObserver.observe(el);
@@ -301,19 +366,17 @@
             // --- Animate Numbers ---
             function animateNumber(element) {
                 const target = parseFloat(element.getAttribute('data-target'));
-                const duration = 1500; // ms
-                const frameRate = 1000 / 60; // 60 fps
+                const duration = 1500;
+                const frameRate = 1000 / 60;
                 const totalFrames = Math.round(duration / frameRate);
                 let currentFrame = 0;
                 const initialValue = 0;
-                
                 const increment = (target - initialValue) / totalFrames;
 
                 const timer = setInterval(() => {
                     currentFrame++;
                     const currentValue = initialValue + (increment * currentFrame);
-
-                    if (currentFrame === totalFrames) {
+                    if (currentFrame >= totalFrames) {
                         clearInterval(timer);
                         element.innerText = target.toLocaleString('en-US', { maximumFractionDigits: 2 });
                     } else {
@@ -322,68 +385,150 @@
                 }, frameRate);
             }
 
-            // --- Particle JS for Hero Background ---
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
+            // --- Interactive Particle JS ---
+            const particleCanvas = document.getElementById('particle-canvas');
+            const pCtx = particleCanvas.getContext('2d');
             let particles = [];
+            let mouse = { x: null, y: null, radius: 150 };
 
-            function resizeCanvas() {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = event.clientX;
+                mouse.y = event.clientY;
+            });
+            window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+            function resizeParticleCanvas() {
+                particleCanvas.width = particleCanvas.offsetWidth;
+                particleCanvas.height = particleCanvas.offsetHeight;
             }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
+            resizeParticleCanvas();
+            
             class Particle {
                 constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 1.5 + 0.5;
-                    this.speedX = Math.random() * 1 - 0.5;
-                    this.speedY = Math.random() * 1 - 0.5;
-                    this.color = 'rgba(247, 147, 26, 0.5)';
+                    this.x = Math.random() * particleCanvas.width;
+                    this.y = Math.random() * particleCanvas.height;
+                    this.baseX = this.x;
+                    this.baseY = this.y;
+                    this.size = Math.random() * 2 + 1;
+                    this.density = (Math.random() * 30) + 1;
+                    this.color = 'rgba(247, 147, 26, 0.6)';
                 }
                 update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-
-                    if (this.size > 0.1) this.size -= 0.01;
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        let force = (mouse.radius - distance) / mouse.radius;
+                        this.x -= (dx / distance) * force * this.density * 0.1;
+                        this.y -= (dy / distance) * force * this.density * 0.1;
+                    } else {
+                        if (this.x !== this.baseX) { this.x -= (this.x - this.baseX) / 10; }
+                        if (this.y !== this.baseY) { this.y -= (this.y - this.baseY) / 10; }
+                    }
                 }
                 draw() {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
+                    pCtx.fillStyle = this.color;
+                    pCtx.beginPath();
+                    pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    pCtx.fill();
                 }
             }
 
             function initParticles() {
-                for (let i = 0; i < 100; i++) {
+                particles = [];
+                let numberOfParticles = (particleCanvas.height * particleCanvas.width) / 9000;
+                for (let i = 0; i < numberOfParticles; i++) {
                     particles.push(new Particle());
                 }
             }
             initParticles();
 
-            function handleParticles() {
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update();
-                    particles[i].draw();
-                    if (particles[i].size <= 0.1) {
-                        particles.splice(i, 1);
-                        i--;
-                        particles.push(new Particle());
-                    }
-                }
+            function animateParticles() {
+                pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animateParticles);
             }
+            animateParticles();
 
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                handleParticles();
-                requestAnimationFrame(animate);
+            // --- 3D Coin ---
+            const coinCanvas = document.getElementById('coin-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, coinCanvas.clientWidth / coinCanvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: coinCanvas, alpha: true });
+            renderer.setSize(300, 300);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            const geometry = new THREE.CylinderGeometry(5, 5, 1, 64);
+            const textCanvas = document.createElement('canvas');
+            textCanvas.width = 256; textCanvas.height = 256;
+            const textCtx = textCanvas.getContext('2d');
+            textCtx.fillStyle = '#DAA520'; textCtx.fillRect(0, 0, 256, 256);
+            textCtx.font = 'bold 128px Inter'; textCtx.fillStyle = 'rgba(0,0,0,0.5)';
+            textCtx.textAlign = 'center'; textCtx.textBaseline = 'middle';
+            textCtx.fillText('BII', 128, 128);
+            const faceTexture = new THREE.CanvasTexture(textCanvas);
+
+            const materials = [
+                new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 }),
+                new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 }),
+                new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 })
+            ];
+            const coin = new THREE.Mesh(geometry, materials);
+            scene.add(coin);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 1);
+            pointLight.position.set(5, 15, 15);
+            scene.add(pointLight);
+            camera.position.z = 10;
+
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            coinCanvas.addEventListener('mousedown', (e) => { isDragging = true; });
+            window.addEventListener('mouseup', (e) => { isDragging = false; });
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const deltaMove = {
+                    x: e.offsetX - previousMousePosition.x,
+                    y: e.offsetY - previousMousePosition.y
+                };
+                coin.rotation.y += deltaMove.x * 0.005;
+                coin.rotation.x += deltaMove.y * 0.005;
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            });
+
+            function animateCoin() {
+                requestAnimationFrame(animateCoin);
+                if (!isDragging) {
+                    coin.rotation.y += 0.005;
+                    coin.rotation.x += 0.001;
+                }
+                renderer.render(scene, camera);
             }
-            animate();
+            animateCoin();
+
+            // --- Roadmap Line Animation ---
+            function animateRoadmapLine() {
+                const roadmapContainer = document.getElementById('roadmap-container');
+                const lineProgress = document.getElementById('roadmap-line-progress');
+                const containerTop = roadmapContainer.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                let scrollPercent = Math.max(0, (windowHeight - containerTop) / (windowHeight * 0.8));
+                scrollPercent = Math.min(1, scrollPercent);
+                lineProgress.style.height = `${scrollPercent * 100}%`;
+            }
+            window.addEventListener('scroll', animateRoadmapLine);
+
+
+            // --- Responsiveness ---
+            window.addEventListener('resize', () => {
+                resizeParticleCanvas();
+                initParticles();
+                camera.aspect = 300 / 300;
+                camera.updateProjectionMatrix();
+            });
         });
     </script>
 </body>
