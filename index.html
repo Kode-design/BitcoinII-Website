@@ -323,7 +323,7 @@
                 <div class="stat-card p-6 rounded-lg glass-effect text-center w-full max-w-xs">
                     <p class="text-gray-400 text-lg">Current Price</p>
                     <p class="text-4xl md:text-5xl font-bold text-white my-2">$<span class="animate-number" data-target="0.01">0.00</span></p>
-                    <p class="text-xs text-gray-500 mt-2">Last updated: <span id="last-updated"></span></p>
+                    <p class="text-xs text-gray-500 mt-2">Tuesday, July 8, 2025 at 10:20 PM BST</p>
                 </div>
             </div>
         </div>
@@ -455,10 +455,8 @@
 
             // --- INITIALIZATION ---
             initSpotlightEffect();
-            initHeroAnimation();
             initScrollAnimations();
             initNumberTicker();
-            initTimestampUpdater();
             initFlipCards();
             init3dCoin();
             initParticleEffect();
@@ -473,45 +471,6 @@
                 on('mousemove', window, (e) => {
                     spotlight.style.left = `${e.clientX}px`;
                     spotlight.style.top = `${e.clientY}px`;
-                });
-            }
-
-            function initHeroAnimation() {
-                const heroTitle = select('.hero-title');
-                if (!heroTitle) return;
-
-                const nodes = [...heroTitle.childNodes];
-                heroTitle.innerHTML = '';
-                let charIndex = 0;
-
-                nodes.forEach(node => {
-                    if (node.nodeType === 3) { // Text node
-                        const text = node.textContent;
-                        text.split('').forEach(char => {
-                            const span = document.createElement('span');
-                            span.className = 'char';
-                            span.textContent = char;
-                            span.style.animationDelay = `${charIndex * 0.03}s`;
-                            if (char.trim() === '') span.style.width = '0.25em';
-                            heroTitle.appendChild(span);
-                            charIndex++;
-                        });
-                    } else if (node.nodeType === 1 && node.nodeName === 'SPAN' && node.classList.contains('block')) { // Element node (the <span class="block">)
-                        const wrapper = node.cloneNode(false); // clone the span.block
-                        const text = node.textContent;
-                        text.split('').forEach(char => {
-                            const span = document.createElement('span');
-                            span.className = 'char';
-                            span.textContent = char;
-                            span.style.animationDelay = `${charIndex * 0.03}s`;
-                            if (char.trim() === '') span.style.width = '0.25em';
-                            wrapper.appendChild(span);
-                            charIndex++;
-                        });
-                        heroTitle.appendChild(wrapper);
-                    } else {
-                        heroTitle.appendChild(node.cloneNode(true));
-                    }
                 });
             }
 
@@ -555,13 +514,6 @@
                     }
                     element.innerText = start.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }, stepTime);
-            }
-
-            function initTimestampUpdater() {
-                const lastUpdatedEl = select('#last-updated');
-                const update = () => { if(lastUpdatedEl) lastUpdatedEl.textContent = new Date().toLocaleTimeString() };
-                update();
-                setInterval(update, 5000);
             }
 
             function initFlipCards() {
