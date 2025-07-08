@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
@@ -72,33 +75,16 @@
             color: #0a0a0a;
             box-shadow: 0 0 20px rgba(247, 147, 26, 0.4);
         }
-        .feature-card {
+        .tech-card {
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.4s ease;
         }
-        .feature-card:hover {
+        .tech-card:hover {
             transform: translateY(-8px);
             border-color: #f7931a;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 0 20px rgba(247, 147, 26, 0.2);
         }
-        .roadmap-line {
-            position: absolute;
-            left: 1.25rem;
-            top: 1.25rem;
-            width: 2px;
-            background-color: rgba(255, 255, 255, 0.2);
-            z-index: -1;
-            height: calc(100% - 2.5rem);
-        }
-        .roadmap-line-progress {
-            width: 100%;
-            background-image: linear-gradient(to bottom, #f7931a, #f9a84a);
-            height: 0;
-            transition: height 1s ease-out;
-        }
-        .roadmap-dot {
-            background-image: linear-gradient(to bottom, #f7931a, #f9a84a);
-        }
+        
         /* Mobile Menu Styling */
         .mobile-nav {
             transform: translateX(100%);
@@ -116,6 +102,27 @@
         .scroll-reveal.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+        #coin-canvas-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #coin-canvas-container::before {
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(247, 147, 26, 0.3) 0%, rgba(247, 147, 26, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 4s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
         }
         #coin-canvas {
             width: 300px !important;
@@ -137,9 +144,6 @@
                 transform: translateY(0);
             }
         }
-        .cta-section {
-            background: linear-gradient(45deg, rgba(247, 147, 26, 0.1), rgba(247, 147, 26, 0.05) 50%, rgba(10,10,10,0) 100%), #111;
-        }
         .code-block {
             background-color: #000;
             color: #f0f0f0;
@@ -148,6 +152,32 @@
             font-family: 'Courier New', Courier, monospace;
             white-space: pre-wrap;
             word-wrap: break-word;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: #333;
+            border: 1px solid #555;
+            color: #ddd;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            background-color: #f7931a;
+            color: #0a0a0a;
+            border-color: #f7931a;
+        }
+        .social-icon:hover {
+            animation: bounce 0.6s ease;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
         }
     </style>
 </head>
@@ -156,16 +186,15 @@
 
     <!-- Header -->
     <header class="fixed w-full top-0 z-50 glass-effect">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white z-50 flex items-center space-x-2">
-                <i class="fas fa-history text-amber-500"></i>
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-white z-50 flex items-center space-x-3">
+                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250707_1303_Stylish%20Bitcoin%20Symbol_remix_01jzjc8q9xf788pgj50kr2wpkx.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
                 <span>Bitcoin II</span>
             </a>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#about" class="text-gray-300 hover:text-amber-500 transition">Discover</a>
                 <a href="#tech" class="text-gray-300 hover:text-amber-500 transition">Tech Specs</a>
                 <a href="#mining" class="text-gray-300 hover:text-amber-500 transition">Mining</a>
-                <a href="#roadmap" class="text-gray-300 hover:text-amber-500 transition">Roadmap</a>
                 <a href="#community" class="text-gray-300 hover:text-amber-500 transition">Community</a>
             </div>
             <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
@@ -182,7 +211,6 @@
         <a href="#about" class="block text-white text-lg py-3 hover:text-amber-500 transition">Discover</a>
         <a href="#tech" class="block text-white text-lg py-3 hover:text-amber-500 transition">Tech Specs</a>
         <a href="#mining" class="block text-white text-lg py-3 hover:text-amber-500 transition">Mining</a>
-        <a href="#roadmap" class="block text-white text-lg py-3 hover:text-amber-500 transition">Roadmap</a>
         <a href="#community" class="block text-white text-lg py-3 hover:text-amber-500 transition">Community</a>
         <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="mt-6 block btn-primary text-center font-bold py-3 px-6 rounded-lg">
             Get Wallet
@@ -206,6 +234,19 @@
             </div>
         </div>
     </main>
+    
+    <!-- Live Stats Section -->
+    <section id="stats" class="py-12 scroll-reveal">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-center">
+                <div class="stat-card p-6 rounded-lg glass-effect text-center w-full max-w-xs">
+                    <p class="text-gray-400 text-lg">Current Price</p>
+                    <p class="text-4xl md:text-5xl font-bold text-white my-2">$<span class="animate-number" data-target="0.01">0.00</span></p>
+                    <p class="text-xs text-gray-500 mt-2">Last updated: <span id="last-updated"></span></p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- About Section -->
     <section id="about" class="py-20 scroll-reveal">
@@ -220,7 +261,7 @@
                     <p class="text-gray-400 mb-6">BitcoinII is built on the security principles and technology that has proven itself for the past 16 years. The intent is not to compete with, nor attempt to replace Bitcoin, but to become a "Sister Chain" that appeals to "Maxis" and "Newcomers" alike. We encourage people to continue to support Bitcoin and its developers. BitcoinII is offered as an accompaniment to their efforts.</p>
                     <p class="text-gray-400">While Bitcoin (BTC) continues to be a long term investment vehicle, perhaps BitcoinII (BC2) can provide an instrument to be used more freely for day-to-day purchases, by implementing the same proven and familiar technology that millions around the world have grown to understand and trust.</p>
                 </div>
-                <div class="flex justify-center items-center p-8">
+                <div id="coin-canvas-container" class="p-8">
                     <canvas id="coin-canvas"></canvas>
                 </div>
             </div>
@@ -238,25 +279,25 @@
                 <div>
                     <h3 class="text-3xl font-bold text-white mb-4 text-center">What's the Same?</h3>
                     <ul class="space-y-4 text-gray-300">
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-microchip text-amber-500 mr-3"></i><strong>PoW Algorithm:</strong> SHA256</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-coins text-amber-500 mr-3"></i><strong>Maximum Supply:</strong> 21,000,000 BC2</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-divide text-amber-500 mr-3"></i><strong>Smallest Unit:</strong> 0.00000001 BC2 (1 Satooshi)</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-sync-alt text-amber-500 mr-3"></i><strong>Difficulty Retargeting:</strong> Every 2016 blocks (~2 weeks)</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-chart-line text-amber-500 mr-3"></i><strong>Block Subsidy Halving:</strong> Every 210,000 blocks (~4 years)</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-gift text-amber-500 mr-3"></i><strong>Initial Block Reward:</strong> 50 BC2</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-check-double text-amber-500 mr-3"></i><strong>Buried BIPs:</strong> BIP34, BIP65, BIP66, CSV, and SegWit are activated.</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-microchip text-amber-500 mr-4 w-6 text-center"></i><strong>PoW Algorithm:</strong> SHA256</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-coins text-amber-500 mr-4 w-6 text-center"></i><strong>Maximum Supply:</strong> 21,000,000 BC2</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-divide text-amber-500 mr-4 w-6 text-center"></i><strong>Smallest Unit:</strong> 0.00000001 BC2 (1 Satooshi)</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-sync-alt text-amber-500 mr-4 w-6 text-center"></i><strong>Difficulty Retargeting:</strong> Every 2016 blocks</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-chart-line text-amber-500 mr-4 w-6 text-center"></i><strong>Block Subsidy Halving:</strong> Every 210,000 blocks</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-gift text-amber-500 mr-4 w-6 text-center"></i><strong>Initial Block Reward:</strong> 50 BC2</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-check-double text-amber-500 mr-4 w-6 text-center"></i><strong>Buried BIPs:</strong> CSV, SegWit & more activated.</li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-3xl font-bold text-white mb-4 text-center">What's Different?</h3>
                      <ul class="space-y-4 text-gray-300">
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-gavel text-amber-500 mr-3"></i><strong>New Genesis Block:</strong> Not a hard or soft fork of the Bitcoin network.</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-tachometer-alt text-amber-500 mr-3"></i><strong>Difficulty Restart:</strong> PoW difficulty restarted at 1.</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-network-wired text-amber-500 mr-3"></i><strong>Network Ports:</strong> Uses different ports (8338, 18338, etc.) to allow co-existence with Bitcoin nodes.</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-tools text-amber-500 mr-3"></i><strong>RPC Ports:</strong> Fully configurable to avoid conflicts.</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-file-code text-amber-500 mr-3"></i><strong>Binary Names:</strong> Renamed (bitcoinIId, etc.) for side-by-side operation.</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-folder text-amber-500 mr-3"></i><strong>Data Directories:</strong> Changed to facilitate running both nodes on one machine.</li>
-                        <li class="glass-effect p-4 rounded-lg"><i class="fas fa-leaf text-amber-500 mr-3"></i><strong>Taproot:</strong> Not buried; deployment is a community decision.</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-gavel text-amber-500 mr-4 w-6 text-center"></i><strong>New Genesis Block:</strong> Not a Bitcoin fork.</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-tachometer-alt text-amber-500 mr-4 w-6 text-center"></i><strong>Difficulty Restart:</strong> PoW difficulty restarted at 1.</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-network-wired text-amber-500 mr-4 w-6 text-center"></i><strong>Network Ports:</strong> Uses different ports (8338, etc).</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-tools text-amber-500 mr-4 w-6 text-center"></i><strong>RPC Ports:</strong> Fully configurable to avoid conflicts.</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-file-code text-amber-500 mr-4 w-6 text-center"></i><strong>Binary Names:</strong> Renamed for side-by-side operation.</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-folder text-amber-500 mr-4 w-6 text-center"></i><strong>Data Directories:</strong> Changed for co-existence.</li>
+                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-leaf text-amber-500 mr-4 w-6 text-center"></i><strong>Taproot:</strong> A community decision.</li>
                     </ul>
                 </div>
             </div>
@@ -273,7 +314,7 @@
             <div class="max-w-4xl mx-auto glass-effect p-8 rounded-lg">
                 <h3 class="text-2xl font-bold text-white mb-4">Recommended Software</h3>
                 <p class="text-gray-300 mb-4">We recommend using Pooler's "cpuminer", also known as "minerd". You can find the source code to compile yourself or pre-compiled binaries ready to run.</p>
-                <div class="flex space-x-4 mb-8">
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
                     <a href="https://github.com/pooler/cpuminer" target="_blank" rel="noopener noreferrer" class="btn-secondary font-bold py-2 px-6 rounded-lg flex-1 text-center"><i class="fab fa-github mr-2"></i> Source Code</a>
                     <a href="https://sourceforge.net/projects/cpuminer/" target="_blank" rel="noopener noreferrer" class="btn-secondary font-bold py-2 px-6 rounded-lg flex-1 text-center"><i class="fas fa-download mr-2"></i> Binaries</a>
                 </div>
@@ -283,33 +324,10 @@
                 
                 <h3 class="text-2xl font-bold text-white mb-4">Connect to the Network</h3>
                 <p class="text-gray-300 mb-2">Until more nodes come online and the DNS seed server populates, use the following command in BitcoinII-qt's RPC console to connect:</p>
-                <div class="code-block">addnode bitcoinII.ddns.net:8338 add</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Roadmap Section -->
-    <section id="roadmap" class="py-20 scroll-reveal">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-white">The Roadmap is Yours</h2>
-                <p class="text-gray-400 mt-4 max-w-2xl mx-auto">The future of BitcoinII is not for one person to determine. It is for YOU, the Community, to decide.</p>
-            </div>
-            <div class="max-w-2xl mx-auto text-center glass-effect p-8 rounded-lg">
-                <i class="fas fa-users text-5xl text-amber-500 mb-4"></i>
-                <p class="text-lg text-gray-300">The hope and intent is that BitcoinII grows to become something of value and purpose to a large Community of Node Operators, Volunteers, Miners, and users. We invite you to join the discussion and help shape the journey ahead.</p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- CTA Section -->
-    <section id="cta" class="py-20 cta-section scroll-reveal">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold text-white">Ready to Get Involved?</h2>
-            <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">The future is in your hands. Download the wallet, join the conversation, and become a part of the next financial revolution.</p>
-            <div class="flex justify-center space-x-4">
-                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">Download Wallet</a>
-                <a href="#community" class="btn-secondary font-bold py-3 px-8 rounded-lg text-lg">Join Community</a>
+                <div class="code-block" id="addnode-command-container">
+                    <span id="addnode-command">addnode bitcoinII.ddns.net:8338 add</span>
+                    <button class="copy-btn" onclick="copyCommand()">Copy</button>
+                </div>
             </div>
         </div>
     </section>
@@ -318,13 +336,13 @@
     <section id="community" class="py-20 scroll-reveal">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-4xl font-bold text-white">The Power of Community</h2>
-            <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">The BitcoinII project needs volunteers: Node Operators, DNS Seed Server Operators, Miners, and more. If you would like to volunteer, reach out to <strong>BrokenMachine</strong> on the BitcoinII subreddit.</p>
+            <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">The future is in your hands. The BitcoinII project needs volunteers: Node Operators, DNS Seed Server Operators, Miners, and more. If you would like to volunteer, reach out to <strong>BrokenMachine</strong> on the BitcoinII subreddit.</p>
             <div class="flex justify-center items-center space-x-6 md:space-x-8">
-                <a href="https://discord.gg/zUSkQHNVyG" class="text-gray-400 hover:text-amber-500 transition-transform duration-300 transform hover:scale-110"><i class="fab fa-discord text-5xl"></i></a>
-                <a href="https://x.com/bc2org" class="text-gray-400 hover:text-amber-500 transition-transform duration-300 transform hover:scale-110"><i class="fab fa-twitter text-5xl"></i></a>
-                <a href="https://www.reddit.com/r/BitcoinII/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-amber-500 transition-transform duration-300 transform hover:scale-110"><i class="fab fa-reddit-alien text-5xl"></i></a>
-                <a href="https://t.me/+mc19GB_d5yo3Yjg5" class="text-gray-400 hover:text-amber-500 transition-transform duration-300 transform hover:scale-110"><i class="fab fa-telegram text-5xl"></i></a>
-                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-amber-500 transition-transform duration-300 transform hover:scale-110"><i class="fab fa-github text-5xl"></i></a>
+                <a href="https://discord.gg/zUSkQHNVyG" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-discord text-5xl"></i></a>
+                <a href="https://x.com/bc2org" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-twitter text-5xl"></i></a>
+                <a href="https://www.reddit.com/r/BitcoinII/" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-reddit-alien text-5xl"></i></a>
+                <a href="https://t.me/+mc19GB_d5yo3Yjg5" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-telegram text-5xl"></i></a>
+                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-github text-5xl"></i></a>
             </div>
         </div>
     </section>
@@ -332,7 +350,10 @@
     <!-- Footer -->
     <footer class="bg-black py-12">
         <div class="container mx-auto px-6 text-center text-gray-500">
-            <p>&copy; 2025 Bitcoin II. All rights reserved.</p>
+             <a href="#" class="inline-block mb-4">
+                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250707_1303_Stylish%20Bitcoin%20Symbol_remix_01jzjc8q9xf788pgj50kr2wpkx.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+            </a>
+            <p>&copy; 2025 Bitcoin II. A Community Project.</p>
         </div>
     </footer>
 
@@ -369,13 +390,15 @@
             const words = heroTitle.innerText.split(' ');
             heroTitle.innerHTML = words.map((word, index) => `<span style="animation-delay: ${index * 0.1}s">${word}</span>`).join(' ');
 
-            // --- Scroll Animations ---
+            // --- Scroll Animations & Number Ticker ---
             const scrollObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
+                        
                         const numberElements = entry.target.querySelectorAll('.animate-number');
                         numberElements.forEach(el => animateNumber(el));
+
                         observer.unobserve(entry.target);
                     }
                 });
@@ -385,10 +408,9 @@
                 scrollObserver.observe(el);
             });
             
-            // --- Animate Numbers ---
             function animateNumber(element) {
                 const target = parseFloat(element.getAttribute('data-target'));
-                const duration = 1500;
+                const duration = 2000;
                 const frameRate = 1000 / 60;
                 const totalFrames = Math.round(duration / frameRate);
                 let currentFrame = 0;
@@ -397,15 +419,29 @@
 
                 const timer = setInterval(() => {
                     currentFrame++;
-                    const currentValue = initialValue + (increment * currentFrame);
+                    let currentValue = initialValue + (increment * currentFrame);
+                    
                     if (currentFrame >= totalFrames) {
                         clearInterval(timer);
-                        element.innerText = target.toLocaleString('en-US', { maximumFractionDigits: 2 });
-                    } else {
-                        element.innerText = currentValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+                        currentValue = target;
                     }
+                    
+                    element.innerText = currentValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
                 }, frameRate);
             }
+
+            // --- Last Updated Timestamp ---
+            const lastUpdatedEl = document.getElementById('last-updated');
+            function updateTimestamp() {
+                if(lastUpdatedEl) {
+                    lastUpdatedEl.textContent = new Date().toLocaleTimeString();
+                }
+            }
+            updateTimestamp();
+            setInterval(updateTimestamp, 5000);
 
             // --- Interactive Particle JS ---
             const particleCanvas = document.getElementById('particle-canvas');
@@ -413,10 +449,7 @@
             let particles = [];
             let mouse = { x: null, y: null, radius: 150 };
 
-            window.addEventListener('mousemove', (event) => {
-                mouse.x = event.clientX;
-                mouse.y = event.clientY;
-            });
+            window.addEventListener('mousemove', (event) => { mouse.x = event.clientX; mouse.y = event.clientY; });
             window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
 
             function resizeParticleCanvas() {
@@ -532,6 +565,23 @@
                 renderer.render(scene, camera);
             }
             animateCoin();
+
+            // --- Copy Command ---
+            window.copyCommand = function() {
+                const commandText = document.getElementById('addnode-command').innerText;
+                const textarea = document.createElement('textarea');
+                textarea.value = commandText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                const btn = document.querySelector('.copy-btn');
+                btn.innerText = 'Copied!';
+                setTimeout(() => {
+                    btn.innerText = 'Copy';
+                }, 2000);
+            }
 
             // --- Responsiveness ---
             window.addEventListener('resize', () => {
