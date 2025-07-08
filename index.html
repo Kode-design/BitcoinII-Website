@@ -48,6 +48,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
+            transition: transform 0.2s ease-out;
         }
         .hero-content {
             position: relative;
@@ -75,16 +76,64 @@
             color: #0a0a0a;
             box-shadow: 0 0 20px rgba(247, 147, 26, 0.4);
         }
-        .tech-card {
+        
+        /* Flip Card */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
             transition: all 0.4s ease;
         }
-        .tech-card:hover {
+        .flip-card:hover {
             transform: translateY(-8px);
             border-color: #f7931a;
             box-shadow: 0 0 20px rgba(247, 147, 26, 0.2);
         }
-        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        .flip-card-front::after {
+            content: '\f021'; /* Font Awesome refresh icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            color: rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        .flip-card:hover .flip-card-front::after {
+            color: #f7931a;
+            transform: rotate(180deg);
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+            font-size: 0.9rem;
+            text-align: center;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+
         /* Mobile Menu Styling */
         .mobile-nav {
             transform: translateX(100%);
@@ -132,44 +181,48 @@
         #coin-canvas:active {
             cursor: grabbing;
         }
-        .hero-title span {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInWord 0.5s forwards;
+        .hero-title {
+            background: -webkit-linear-gradient(45deg, #f7931a, #f9a84a, #e5e5e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        @keyframes fadeInWord {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .terminal-window {
+            background-color: #0D1117;
+            border: 1px solid #30363D;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .terminal-header {
+            background-color: #161B22;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
         }
         .code-block {
-            background-color: #000;
-            color: #f0f0f0;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            font-family: 'Courier New', Courier, monospace;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            padding: 1.5rem;
             position: relative;
         }
         .copy-btn {
             position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            background-color: #333;
-            border: 1px solid #555;
-            color: #ddd;
+            top: 1.25rem;
+            right: 1.25rem;
+            background-color: #21262D;
+            border: 1px solid #30363D;
+            color: #C9D1D9;
             padding: 0.25rem 0.5rem;
             border-radius: 0.25rem;
             cursor: pointer;
             transition: all 0.2s ease;
         }
         .copy-btn:hover {
-            background-color: #f7931a;
-            color: #0a0a0a;
-            border-color: #f7931a;
+            background-color: #30363D;
+            border-color: #8B949E;
         }
         .social-icon:hover {
             animation: bounce 0.6s ease;
@@ -178,6 +231,35 @@
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
             40% {transform: translateY(-10px);}
             60% {transform: translateY(-5px);}
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #f7931a;
+            text-shadow: 0 0 8px rgba(247, 147, 26, 0.7);
+        }
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #f7931a;
+            color: #0a0a0a;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+            z-index: 50;
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        #back-to-top:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -188,14 +270,14 @@
     <header class="fixed w-full top-0 z-50 glass-effect">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="#" class="text-xl font-bold text-white z-50 flex items-center space-x-3">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250707_1303_Stylish%20Bitcoin%20Symbol_remix_01jzjc8q9xf788pgj50kr2wpkx.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
                 <span>Bitcoin II</span>
             </a>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#about" class="text-gray-300 hover:text-amber-500 transition">Discover</a>
-                <a href="#tech" class="text-gray-300 hover:text-amber-500 transition">Tech Specs</a>
-                <a href="#mining" class="text-gray-300 hover:text-amber-500 transition">Mining</a>
-                <a href="#community" class="text-gray-300 hover:text-amber-500 transition">Community</a>
+            <div id="desktop-nav" class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="nav-link text-gray-300 hover:text-amber-500 transition">Discover</a>
+                <a href="#tech" class="nav-link text-gray-300 hover:text-amber-500 transition">Tech Specs</a>
+                <a href="#mining" class="nav-link text-gray-300 hover:text-amber-500 transition">Mining</a>
+                <a href="#community" class="nav-link text-gray-300 hover:text-amber-500 transition">Community</a>
             </div>
             <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
                 Get Wallet
@@ -218,12 +300,11 @@
     </div>
 
     <!-- Hero Section -->
-    <main class="hero-gradient pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+    <main id="home" class="hero-gradient pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
         <canvas id="particle-canvas"></canvas>
         <div class="container mx-auto px-6 text-center hero-content">
-            <h1 class="hero-title text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6">
-                What if you had a
-                <span class="block text-amber-500">second chance?</span>
+            <h1 class="hero-title text-4xl md:text-6xl lg:text-7xl font-black leading-tight mb-6">
+                What if you had a second chance?
             </h1>
             <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-10">
                 Satoshi Nakamoto is often credited with saying, "It might make sense to get some in case it catches on." Many people wish they could have been mining Bitcoin since 2009. Absent a working time machine, this is the best chance at a second chance that we can provide.
@@ -273,33 +354,15 @@
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-white">The Technology</h2>
-                <p class="text-gray-400 mt-4 max-w-2xl mx-auto">Familiar, proven, and secure. Forked from Bitcoin Core 0.27.0 source code, with a few key differences.</p>
+                <p class="text-gray-400 mt-4 max-w-2xl mx-auto">Familiar, proven, and secure. Click a card to flip for more info.</p>
             </div>
-            <div class="grid md:grid-cols-2 gap-12 items-start">
-                <div>
-                    <h3 class="text-3xl font-bold text-white mb-4 text-center">What's the Same?</h3>
-                    <ul class="space-y-4 text-gray-300">
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-microchip text-amber-500 mr-4 w-6 text-center"></i><strong>PoW Algorithm:</strong> SHA256</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-coins text-amber-500 mr-4 w-6 text-center"></i><strong>Maximum Supply:</strong> 21,000,000 BC2</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-divide text-amber-500 mr-4 w-6 text-center"></i><strong>Smallest Unit:</strong> 0.00000001 BC2 (1 Satooshi)</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-sync-alt text-amber-500 mr-4 w-6 text-center"></i><strong>Difficulty Retargeting:</strong> Every 2016 blocks</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-chart-line text-amber-500 mr-4 w-6 text-center"></i><strong>Block Subsidy Halving:</strong> Every 210,000 blocks</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-gift text-amber-500 mr-4 w-6 text-center"></i><strong>Initial Block Reward:</strong> 50 BC2</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-check-double text-amber-500 mr-4 w-6 text-center"></i><strong>Buried BIPs:</strong> CSV, SegWit & more activated.</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-white mb-4 text-center">What's Different?</h3>
-                     <ul class="space-y-4 text-gray-300">
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-gavel text-amber-500 mr-4 w-6 text-center"></i><strong>New Genesis Block:</strong> Not a Bitcoin fork.</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-tachometer-alt text-amber-500 mr-4 w-6 text-center"></i><strong>Difficulty Restart:</strong> PoW difficulty restarted at 1.</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-network-wired text-amber-500 mr-4 w-6 text-center"></i><strong>Network Ports:</strong> Uses different ports (8338, etc).</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-tools text-amber-500 mr-4 w-6 text-center"></i><strong>RPC Ports:</strong> Fully configurable to avoid conflicts.</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-file-code text-amber-500 mr-4 w-6 text-center"></i><strong>Binary Names:</strong> Renamed for side-by-side operation.</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-folder text-amber-500 mr-4 w-6 text-center"></i><strong>Data Directories:</strong> Changed for co-existence.</li>
-                        <li class="tech-card glass-effect p-4 rounded-lg flex items-center"><i class="fas fa-leaf text-amber-500 mr-4 w-6 text-center"></i><strong>Taproot:</strong> A community decision.</li>
-                    </ul>
-                </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front glass-effect"><i class="fas fa-microchip text-amber-500 text-3xl mb-3"></i><strong class="text-lg">PoW Algorithm: SHA256</strong></div><div class="flip-card-back glass-effect"><p>Uses the same battle-tested hashing algorithm as Bitcoin, ensuring robust security and a proven track record.</p></div></div></div>
+                <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front glass-effect"><i class="fas fa-coins text-amber-500 text-3xl mb-3"></i><strong class="text-lg">Max Supply: 21,000,000</strong></div><div class="flip-card-back glass-effect"><p>A fixed, finite supply, just like Bitcoin, guaranteeing scarcity and protecting against inflation.</p></div></div></div>
+                <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front glass-effect"><i class="fas fa-sync-alt text-amber-500 text-3xl mb-3"></i><strong class="text-lg">Difficulty Retargeting</strong></div><div class="flip-card-back glass-effect"><p>The network difficulty adjusts every 2016 blocks, ensuring block times remain consistent as hashrate changes.</p></div></div></div>
+                <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front glass-effect"><i class="fas fa-chart-line text-amber-500 text-3xl mb-3"></i><strong class="text-lg">Subsidy Halving</strong></div><div class="flip-card-back glass-effect"><p>The mining reward is cut in half every 210,000 blocks (~4 years), following Bitcoin's deflationary model.</p></div></div></div>
+                <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front glass-effect"><i class="fas fa-gavel text-amber-500 text-3xl mb-3"></i><strong class="text-lg">New Genesis Block</strong></div><div class="flip-card-back glass-effect"><p>BitcoinII starts with a brand new blockchain. It is not a fork of the existing Bitcoin chain, providing a fresh start for everyone.</p></div></div></div>
+                <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front glass-effect"><i class="fas fa-tachometer-alt text-amber-500 text-3xl mb-3"></i><strong class="text-lg">Difficulty Restart at 1</strong></div><div class="flip-card-back glass-effect"><p>The mining difficulty began at the lowest possible level, opening up mining to standard consumer hardware from day one.</p></div></div></div>
             </div>
         </div>
     </section>
@@ -324,9 +387,16 @@
                 
                 <h3 class="text-2xl font-bold text-white mb-4">Connect to the Network</h3>
                 <p class="text-gray-300 mb-2">Until more nodes come online and the DNS seed server populates, use the following command in BitcoinII-qt's RPC console to connect:</p>
-                <div class="code-block" id="addnode-command-container">
-                    <span id="addnode-command">addnode bitcoinII.ddns.net:8338 add</span>
-                    <button class="copy-btn" onclick="copyCommand()">Copy</button>
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dot" style="background:#ED6A5E;"></div>
+                        <div class="terminal-dot" style="background:#F4BF4F;"></div>
+                        <div class="terminal-dot" style="background:#61C554;"></div>
+                    </div>
+                    <div class="code-block">
+                        <span id="addnode-command">addnode bitcoinII.ddns.net:8338 add</span>
+                        <button class="copy-btn" onclick="copyCommand()">Copy</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -351,224 +421,326 @@
     <footer class="bg-black py-12">
         <div class="container mx-auto px-6 text-center text-gray-500">
              <a href="#" class="inline-block mb-4">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250707_1303_Stylish%20Bitcoin%20Symbol_remix_01jzjc8q9xf788pgj50kr2wpkx.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
             </a>
             <p>&copy; 2025 Bitcoin II. A Community Project.</p>
         </div>
     </footer>
+    
+    <a href="#home" id="back-to-top"><i class="fas fa-arrow-up"></i></a>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // --- Spotlight Effect ---
-            const spotlight = document.querySelector('.spotlight');
-            window.addEventListener('mousemove', (e) => {
-                spotlight.style.left = `${e.clientX}px`;
-                spotlight.style.top = `${e.clientY}px`;
-            });
+            // --- REUSABLE FUNCTIONS ---
+            const select = (el, all = false) => {
+                if (typeof el !== 'string') return el;
+                el = el.trim();
+                if (all) {
+                    return [...document.querySelectorAll(el)];
+                } else {
+                    return document.querySelector(el);
+                }
+            }
 
-            // --- Mobile Menu ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const menuIcon = document.getElementById('menu-icon');
-            
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('open');
-                menuIcon.classList.toggle('fa-bars');
-                menuIcon.classList.toggle('fa-times');
-            });
+            const on = (type, el, listener, all = false) => {
+                let selectEl = select(el, all);
+                if (selectEl) {
+                    if (all && selectEl.forEach) {
+                        selectEl.forEach(e => e.addEventListener(type, listener));
+                    } else {
+                        selectEl.addEventListener(type, listener);
+                    }
+                }
+            }
 
-            document.querySelectorAll('#mobile-menu a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.remove('open');
-                    menuIcon.classList.remove('fa-times');
-                    menuIcon.classList.add('fa-bars');
+            // --- INITIALIZATION ---
+            initSpotlightEffect();
+            initHeroAnimation();
+            initScrollAnimations();
+            initNumberTicker();
+            initTimestampUpdater();
+            initFlipCards();
+            init3dCoin();
+            initParticleEffect();
+            initMobileMenu();
+            initActiveNavOnScroll();
+            initBackToTopButton();
+
+            // --- FUNCTION DEFINITIONS ---
+
+            function initSpotlightEffect() {
+                const spotlight = select('.spotlight');
+                on('mousemove', window, (e) => {
+                    spotlight.style.left = `${e.clientX}px`;
+                    spotlight.style.top = `${e.clientY}px`;
                 });
-            });
+            }
 
-            // --- Hero Title Animation ---
-            const heroTitle = document.querySelector('.hero-title');
-            const words = heroTitle.innerText.split(' ');
-            heroTitle.innerHTML = words.map((word, index) => `<span style="animation-delay: ${index * 0.1}s">${word}</span>`).join(' ');
+            function initHeroAnimation() {
+                const heroTitle = select('.hero-title');
+                if (!heroTitle) return;
 
-            // --- Scroll Animations & Number Ticker ---
-            const scrollObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        
-                        const numberElements = entry.target.querySelectorAll('.animate-number');
-                        numberElements.forEach(el => animateNumber(el));
+                const nodes = [...heroTitle.childNodes];
+                heroTitle.innerHTML = '';
+                let charIndex = 0;
 
-                        observer.unobserve(entry.target);
+                nodes.forEach(node => {
+                    if (node.nodeType === 3) { // Text node
+                        const text = node.textContent;
+                        text.split('').forEach(char => {
+                            const span = document.createElement('span');
+                            span.className = 'char';
+                            span.textContent = char;
+                            span.style.animationDelay = `${charIndex * 0.03}s`;
+                            if (char.trim() === '') span.style.width = '0.25em';
+                            heroTitle.appendChild(span);
+                            charIndex++;
+                        });
+                    } else if (node.nodeType === 1 && node.nodeName === 'SPAN' && node.classList.contains('block')) { // Element node (the <span class="block">)
+                        const wrapper = node.cloneNode(false); // clone the span.block
+                        const text = node.textContent;
+                        text.split('').forEach(char => {
+                            const span = document.createElement('span');
+                            span.className = 'char';
+                            span.textContent = char;
+                            span.style.animationDelay = `${charIndex * 0.03}s`;
+                            if (char.trim() === '') span.style.width = '0.25em';
+                            wrapper.appendChild(span);
+                            charIndex++;
+                        });
+                        heroTitle.appendChild(wrapper);
+                    } else {
+                        heroTitle.appendChild(node.cloneNode(true));
                     }
                 });
-            }, { threshold: 0.1 });
+            }
 
-            document.querySelectorAll('.scroll-reveal').forEach(el => {
-                scrollObserver.observe(el);
-            });
-            
+            function initScrollAnimations() {
+                const scrollObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                select('.scroll-reveal', true).forEach(el => scrollObserver.observe(el));
+            }
+
+            function initNumberTicker() {
+                const numberObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateNumber(entry.target);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.8 });
+                select('.animate-number', true).forEach(el => numberObserver.observe(el));
+            }
+
             function animateNumber(element) {
                 const target = parseFloat(element.getAttribute('data-target'));
                 const duration = 2000;
-                const frameRate = 1000 / 60;
-                const totalFrames = Math.round(duration / frameRate);
-                let currentFrame = 0;
-                const initialValue = 0;
-                const increment = (target - initialValue) / totalFrames;
-
+                let start = 0;
+                const stepTime = 1000 / 60;
+                const steps = duration / stepTime;
+                const increment = (target - start) / steps;
+                
                 const timer = setInterval(() => {
-                    currentFrame++;
-                    let currentValue = initialValue + (increment * currentFrame);
-                    
-                    if (currentFrame >= totalFrames) {
+                    start += increment;
+                    if (start >= target) {
                         clearInterval(timer);
-                        currentValue = target;
+                        start = target;
                     }
-                    
-                    element.innerText = currentValue.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                }, frameRate);
+                    element.innerText = start.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }, stepTime);
             }
 
-            // --- Last Updated Timestamp ---
-            const lastUpdatedEl = document.getElementById('last-updated');
-            function updateTimestamp() {
-                if(lastUpdatedEl) {
-                    lastUpdatedEl.textContent = new Date().toLocaleTimeString();
-                }
+            function initTimestampUpdater() {
+                const lastUpdatedEl = select('#last-updated');
+                const update = () => { if(lastUpdatedEl) lastUpdatedEl.textContent = new Date().toLocaleTimeString() };
+                update();
+                setInterval(update, 5000);
             }
-            updateTimestamp();
-            setInterval(updateTimestamp, 5000);
 
-            // --- Interactive Particle JS ---
-            const particleCanvas = document.getElementById('particle-canvas');
-            const pCtx = particleCanvas.getContext('2d');
-            let particles = [];
-            let mouse = { x: null, y: null, radius: 150 };
-
-            window.addEventListener('mousemove', (event) => { mouse.x = event.clientX; mouse.y = event.clientY; });
-            window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
-
-            function resizeParticleCanvas() {
-                particleCanvas.width = particleCanvas.offsetWidth;
-                particleCanvas.height = particleCanvas.offsetHeight;
+            function initFlipCards() {
+                on('click', '.flip-card', (e) => {
+                    e.currentTarget.classList.toggle('flipped');
+                }, true);
             }
-            resizeParticleCanvas();
+
+            function initMobileMenu() {
+                on('click', '#mobile-menu-button', () => {
+                    select('#mobile-menu').classList.toggle('open');
+                    select('#menu-icon').classList.toggle('fa-bars');
+                    select('#menu-icon').classList.toggle('fa-times');
+                });
+                on('click', '#mobile-menu a', () => {
+                    select('#mobile-menu').classList.remove('open');
+                    select('#menu-icon').classList.add('fa-bars');
+                    select('#menu-icon').classList.remove('fa-times');
+                }, true);
+            }
             
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * particleCanvas.width;
-                    this.y = Math.random() * particleCanvas.height;
-                    this.baseX = this.x;
-                    this.baseY = this.y;
-                    this.size = Math.random() * 2 + 1;
-                    this.density = (Math.random() * 30) + 1;
-                    this.color = 'rgba(247, 147, 26, 0.6)';
-                }
-                update() {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < mouse.radius) {
-                        let force = (mouse.radius - distance) / mouse.radius;
-                        this.x -= (dx / distance) * force * this.density * 0.1;
-                        this.y -= (dy / distance) * force * this.density * 0.1;
+            function initActiveNavOnScroll() {
+                const sections = select('section', true);
+                const navLinks = select('#desktop-nav .nav-link', true);
+                
+                on('scroll', window, () => {
+                    let current = 'home';
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        if (pageYOffset >= sectionTop - 150) {
+                            current = section.getAttribute('id');
+                        }
+                    });
+
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').includes(current)) {
+                            link.classList.add('active');
+                        }
+                    });
+                });
+            }
+
+            function initBackToTopButton() {
+                const backToTopButton = select('#back-to-top');
+                on('scroll', window, () => {
+                    if (window.scrollY > 300) {
+                        backToTopButton.classList.add('visible');
                     } else {
-                        if (this.x !== this.baseX) { this.x -= (this.x - this.baseX) / 10; }
-                        if (this.y !== this.baseY) { this.y -= (this.y - this.baseY) / 10; }
+                        backToTopButton.classList.remove('visible');
+                    }
+                });
+            }
+
+            function init3dCoin() {
+                const coinCanvas = select('#coin-canvas');
+                if (!coinCanvas) return;
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: coinCanvas, alpha: true });
+                renderer.setSize(300, 300);
+                renderer.setPixelRatio(window.devicePixelRatio);
+
+                const geometry = new THREE.CylinderGeometry(5, 5, 1, 64);
+                const textCanvas = document.createElement('canvas');
+                textCanvas.width = 256; textCanvas.height = 256;
+                const textCtx = textCanvas.getContext('2d');
+                textCtx.fillStyle = '#DAA520'; textCtx.fillRect(0, 0, 256, 256);
+                textCtx.font = 'bold 128px Inter'; textCtx.fillStyle = 'rgba(0,0,0,0.5)';
+                textCtx.textAlign = 'center'; textCtx.textBaseline = 'middle';
+                textCtx.fillText('BII', 128, 128);
+                const faceTexture = new THREE.CanvasTexture(textCanvas);
+
+                const materials = [
+                    new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 })
+                ];
+                const coin = new THREE.Mesh(geometry, materials);
+                scene.add(coin);
+
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+                scene.add(ambientLight);
+                const pointLight = new THREE.PointLight(0xffffff, 1);
+                pointLight.position.set(5, 15, 15);
+                scene.add(pointLight);
+                camera.position.z = 10;
+
+                let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+                on('mousedown', coinCanvas, () => { isDragging = true; });
+                on('mouseup', window, () => { isDragging = false; });
+                on('mouseleave', coinCanvas, () => { isDragging = false; });
+                on('mousemove', coinCanvas, (e) => {
+                    if (!isDragging) return;
+                    const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+                    coin.rotation.y += deltaMove.x * 0.005;
+                    coin.rotation.x += deltaMove.y * 0.005;
+                    previousMousePosition = { x: e.offsetX, y: e.offsetY };
+                });
+
+                const animateCoin = () => {
+                    requestAnimationFrame(animateCoin);
+                    if (!isDragging) {
+                        coin.rotation.y += 0.005;
+                        coin.rotation.x += 0.001;
+                    }
+                    renderer.render(scene, camera);
+                }
+                animateCoin();
+            }
+            
+            function initParticleEffect() {
+                const particleCanvas = select('#particle-canvas');
+                if (!particleCanvas) return;
+                const pCtx = particleCanvas.getContext('2d');
+                let particles = [];
+                let mouse = { x: null, y: null, radius: 150 };
+
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * particleCanvas.width;
+                        this.y = Math.random() * particleCanvas.height;
+                        this.baseX = this.x;
+                        this.baseY = this.y;
+                        this.size = Math.random() * 2 + 1;
+                        this.density = (Math.random() * 30) + 1;
+                        this.color = 'rgba(247, 147, 26, 0.6)';
+                    }
+                    update() {
+                        let dx = mouse.x - this.x;
+                        let dy = mouse.y - this.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < mouse.radius) {
+                            let force = (mouse.radius - distance) / mouse.radius;
+                            this.x -= (dx / distance) * force * this.density * 0.1;
+                            this.y -= (dy / distance) * force * this.density * 0.1;
+                        } else {
+                            if (this.x !== this.baseX) { this.x -= (this.x - this.baseX) / 10; }
+                            if (this.y !== this.baseY) { this.y -= (this.y - this.baseY) / 10; }
+                        }
+                    }
+                    draw() {
+                        pCtx.fillStyle = this.color;
+                        pCtx.beginPath();
+                        pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        pCtx.fill();
                     }
                 }
-                draw() {
-                    pCtx.fillStyle = this.color;
-                    pCtx.beginPath();
-                    pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    pCtx.fill();
-                }
-            }
 
-            function initParticles() {
-                particles = [];
-                let numberOfParticles = (particleCanvas.height * particleCanvas.width) / 9000;
-                for (let i = 0; i < numberOfParticles; i++) {
-                    particles.push(new Particle());
-                }
-            }
-            initParticles();
-
-            function animateParticles() {
-                pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-                particles.forEach(p => { p.update(); p.draw(); });
-                requestAnimationFrame(animateParticles);
-            }
-            animateParticles();
-
-            // --- 3D Coin ---
-            const coinCanvas = document.getElementById('coin-canvas');
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: coinCanvas, alpha: true });
-            renderer.setSize(300, 300);
-            renderer.setPixelRatio(window.devicePixelRatio);
-
-            const geometry = new THREE.CylinderGeometry(5, 5, 1, 64);
-            const textCanvas = document.createElement('canvas');
-            textCanvas.width = 256; textCanvas.height = 256;
-            const textCtx = textCanvas.getContext('2d');
-            textCtx.fillStyle = '#DAA520'; textCtx.fillRect(0, 0, 256, 256);
-            textCtx.font = 'bold 128px Inter'; textCtx.fillStyle = 'rgba(0,0,0,0.5)';
-            textCtx.textAlign = 'center'; textCtx.textBaseline = 'middle';
-            textCtx.fillText('BII', 128, 128);
-            const faceTexture = new THREE.CanvasTexture(textCanvas);
-
-            const materials = [
-                new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 }),
-                new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 }),
-                new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 })
-            ];
-            const coin = new THREE.Mesh(geometry, materials);
-            scene.add(coin);
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-            scene.add(ambientLight);
-            const pointLight = new THREE.PointLight(0xffffff, 1);
-            pointLight.position.set(5, 15, 15);
-            scene.add(pointLight);
-            camera.position.z = 10;
-
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-
-            coinCanvas.addEventListener('mousedown', (e) => { isDragging = true; });
-            window.addEventListener('mouseup', (e) => { isDragging = false; });
-            coinCanvas.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                const deltaMove = {
-                    x: e.offsetX - previousMousePosition.x,
-                    y: e.offsetY - previousMousePosition.y
+                const resizeCanvas = () => {
+                    particleCanvas.width = particleCanvas.offsetWidth;
+                    particleCanvas.height = particleCanvas.offsetHeight;
+                    initParticles();
                 };
-                coin.rotation.y += deltaMove.x * 0.005;
-                coin.rotation.x += deltaMove.y * 0.005;
-                previousMousePosition = { x: e.offsetX, y: e.offsetY };
-            });
-             coinCanvas.addEventListener('mouseleave', (e) => { isDragging = false; });
-
-
-            function animateCoin() {
-                requestAnimationFrame(animateCoin);
-                if (!isDragging) {
-                    coin.rotation.y += 0.005;
-                    coin.rotation.x += 0.001;
+                
+                function initParticles() {
+                    particles = [];
+                    let numberOfParticles = (particleCanvas.height * particleCanvas.width) / 9000;
+                    for (let i = 0; i < numberOfParticles; i++) {
+                        particles.push(new Particle());
+                    }
                 }
-                renderer.render(scene, camera);
-            }
-            animateCoin();
 
-            // --- Copy Command ---
+                const animateParticles = () => {
+                    pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+                    particles.forEach(p => { p.update(); p.draw(); });
+                    requestAnimationFrame(animateParticles);
+                }
+
+                resizeCanvas();
+                animateParticles();
+                on('resize', window, resizeCanvas);
+
+                on('mousemove', window, (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+                on('mouseout', window, () => { mouse.x = null; mouse.y = null; });
+            }
+
             window.copyCommand = function() {
-                const commandText = document.getElementById('addnode-command').innerText;
+                const commandText = select('#addnode-command').innerText;
                 const textarea = document.createElement('textarea');
                 textarea.value = commandText;
                 document.body.appendChild(textarea);
@@ -576,20 +748,10 @@
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
                 
-                const btn = document.querySelector('.copy-btn');
+                const btn = select('.copy-btn');
                 btn.innerText = 'Copied!';
-                setTimeout(() => {
-                    btn.innerText = 'Copy';
-                }, 2000);
+                setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
             }
-
-            // --- Responsiveness ---
-            window.addEventListener('resize', () => {
-                resizeParticleCanvas();
-                initParticles();
-                camera.aspect = 300 / 300;
-                camera.updateProjectionMatrix();
-            });
         });
     </script>
 </body>
