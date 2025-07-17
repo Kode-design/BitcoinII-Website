@@ -14,6 +14,7 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Pause the 3D coin by double-clicking it
 - Improved light theme with pure black text for readability
 - Initial loading screen with a spinning 3D coin, random hints and a progress bar
+  that shows an accurate percentage
 - Subtle parallax effect on the hero background
 - Coin scales slightly on hover for extra flair
 - Starry overlay background with a twinkling animation
