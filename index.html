@@ -19,6 +19,20 @@
             animation: gradientMove 30s ease infinite;
             color: #e5e5e5;
             overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(#ffffff11 1px, transparent 1px);
+            background-size: 3px 3px;
+            pointer-events: none;
+            animation: twinkle 5s ease-in-out infinite;
+            z-index: -1;
         }
         body.light {
             background: linear-gradient(-45deg, #ffffff, #e5e5e5, #ffffff, #f0f0f0);
@@ -26,9 +40,32 @@
             animation: gradientMove 30s ease infinite;
             color: #1a1a1a;
         }
+        body.light::before {
+            background: radial-gradient(#00000022 1px, transparent 1px);
+        }
+        @keyframes twinkle {
+            0%,100% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+        }
         #loading-screen {
             background: #000;
-            transition: opacity 1s ease;
+            transition: opacity 1s ease, transform 1s ease;
+            position: fixed;
+            inset: 0;
+        }
+        #loading-screen.fade-out {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+        #loading-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(#ffffff33 1px, transparent 1px);
+            background-size: 4px 4px;
+            animation: twinkle 3s ease-in-out infinite;
+            pointer-events: none;
         }
         #loading-bar {
             width: 80%;
@@ -41,9 +78,12 @@
             height: 100%;
             width: 0%;
             background: linear-gradient(to right, #f7931a, #ffc65a);
-            animation: loadingProgress 5s linear forwards;
+            background-image: linear-gradient(45deg, rgba(255,255,255,0.3) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.3) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: loadingProgress 5s linear forwards, moveStripe 1s linear infinite;
         }
         @keyframes loadingProgress { from { width: 0%; } to { width: 100%; } }
+        @keyframes moveStripe { from { background-position: 0 0; } to { background-position: 1rem 0; } }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .animate-spin-slow { animation: spinSlow 8s linear infinite; }
@@ -108,6 +148,14 @@
             background-color: #f7931a;
             color: #0a0a0a;
             box-shadow: 0 0 20px rgba(247, 147, 26, 0.4);
+        }
+
+        .stat-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
         
         /* Flip Card */
@@ -219,6 +267,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 15px rgba(247, 147, 26, 0.5);
+            animation: float 6s ease-in-out infinite;
         }
         body.light .hero-title {
             background: none;
@@ -294,6 +343,10 @@
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         .nav-link:hover, .nav-link.active {
             color: #f7931a;
@@ -577,14 +630,15 @@
                 const hints = [
                     'Use the theme button to switch modes.',
                     'Double-click the coin to pause its spin.',
-                    'Tap a stat card to reveal numbers.'
+                    'Tap a stat card to reveal numbers.',
+                    'Scroll to discover more features.',
+                    'Hover over cards for surprises.'
                 ];
                 const hintEl = select('#loading-hint');
                 hintEl.innerText = hints[Math.floor(Math.random() * hints.length)];
                 setTimeout(() => {
                     const screen = select('#loading-screen');
-                    screen.style.opacity = '0';
-                    screen.style.pointerEvents = 'none';
+                    screen.classList.add('fade-out');
                     setTimeout(() => screen.remove(), 1000);
                 }, 5000);
             }

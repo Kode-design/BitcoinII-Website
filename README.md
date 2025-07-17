@@ -15,6 +15,10 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Initial loading screen with random hints and a progress bar
 - Subtle parallax effect on the hero background
 - Coin scales slightly on hover for extra flair
+- Starry overlay background with a twinkling animation
+- Loading screen now has a starfield and moving striped progress bar
+- Hero title gently floats for a playful feel
+- Stat cards lift slightly on hover
 
 ## Usage
 
