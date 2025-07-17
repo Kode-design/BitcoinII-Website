@@ -687,8 +687,12 @@
 
                 let coinReady = false;
                 let pageLoaded = document.readyState === 'complete';
+                let timerStarted = false;
                 const tryStart = () => {
-                    if (coinReady && pageLoaded) setTimeout(hideScreen, 5000);
+                    if (coinReady && pageLoaded && !timerStarted) {
+                        timerStarted = true;
+                        setTimeout(hideScreen, 5000);
+                    }
                 };
                 initLoadingCoin(() => {
                     coinReady = true;
@@ -835,7 +839,7 @@
                 const faceTexture = loader.load('logo.png');
 
                 const materials = [
-                    new THREE.MeshStandardMaterial({ color: 0xf3b03d, metalness: 0.8, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ color: 0xf7931a, metalness: 0.8, roughness: 0.3 }),
                     new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 }),
                     new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 })
                 ];
@@ -885,7 +889,7 @@
                 const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 64);
                 new THREE.TextureLoader().load('logo.png', (texture) => {
                     const materials = [
-                        new THREE.MeshStandardMaterial({ color: 0xf3b03d, metalness: 0.8, roughness: 0.3 }),
+                        new THREE.MeshStandardMaterial({ color: 0xf7931a, metalness: 0.8, roughness: 0.3 }),
                         new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 }),
                         new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 })
                     ];

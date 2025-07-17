@@ -22,6 +22,8 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Stat cards lift slightly on hover
 - Loading overlay hides the page scroll bar during initialization
 - Glass-effect components have subtle drop shadows
+- Loading screen remains visible for five seconds after the page and coin are ready
+- Coin colors closely match the Bitcoin II logo for a consistent look
 
 ## Usage
 
