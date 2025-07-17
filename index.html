@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitcoin II - A Second Chance</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -14,10 +14,39 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            background: linear-gradient(-45deg, #1a1a1a, #0d0d0d, #1a1a1a, #0a0a0a);
+            background-size: 400% 400%;
+            animation: gradientMove 30s ease infinite;
             color: #e5e5e5;
             overflow-x: hidden;
         }
+        body.light {
+            background: linear-gradient(-45deg, #ffffff, #e5e5e5, #ffffff, #f0f0f0);
+            background-size: 400% 400%;
+            animation: gradientMove 30s ease infinite;
+            color: #1a1a1a;
+        }
+        #loading-screen {
+            background: #000;
+            transition: opacity 1s ease;
+        }
+        #loading-bar {
+            width: 80%;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        #loading-bar-inner {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #f7931a, #ffc65a);
+            animation: loadingProgress 5s linear forwards;
+        }
+        @keyframes loadingProgress { from { width: 0%; } to { width: 100%; } }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spinSlow 8s linear infinite; }
         .spotlight {
             position: fixed;
             top: 0;
@@ -36,6 +65,10 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.light .glass-effect {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.1);
         }
         .hero-gradient {
             background: radial-gradient(ellipse at 50% 0%, rgba(247, 147, 26, 0.2) 0%, rgba(10, 10, 10, 0) 50%);
@@ -182,9 +215,15 @@
             cursor: grabbing;
         }
         .hero-title {
-            background: -webkit-linear-gradient(45deg, #f7931a, #f9a84a, #e5e5e5);
+            background: linear-gradient(45deg, #f7931a, #ffc65a, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(247, 147, 26, 0.5);
+        }
+        body.light .hero-title {
+            background: none;
+            -webkit-text-fill-color: #1a1a1a;
+            text-shadow: none;
         }
         .terminal-window {
             background-color: #0D1117;
@@ -192,12 +231,19 @@
             border-radius: 0.5rem;
             overflow: hidden;
         }
+        body.light .terminal-window {
+            background-color: #f5f5f5;
+            border-color: #ddd;
+        }
         .terminal-header {
             background-color: #161B22;
             padding: 0.5rem 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+        body.light .terminal-header {
+            background-color: #eee;
         }
         .terminal-dot {
             width: 12px;
@@ -224,17 +270,43 @@
             background-color: #30363D;
             border-color: #8B949E;
         }
+        body.light .copy-btn {
+            background-color: #f0f0f0;
+            border-color: #ccc;
+            color: #333;
+        }
+        body.light .copy-btn:hover {
+            background-color: #e0e0e0;
+            border-color: #bbb;
+        }
         .social-icon:hover {
             animation: bounce 0.6s ease;
+        }
+        body.light .social-icon {
+            color: #555;
         }
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
             40% {transform: translateY(-10px);}
             60% {transform: translateY(-5px);}
         }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         .nav-link:hover, .nav-link.active {
             color: #f7931a;
             text-shadow: 0 0 8px rgba(247, 147, 26, 0.7);
+        }
+        body.light .nav-link {
+            color: #1a1a1a;
+        }
+        body.light .text-white {
+            color: #1a1a1a !important;
+        }
+        body.light .text-gray-400 {
+            color: #4a4a4a !important;
         }
         #back-to-top {
             position: fixed;
@@ -261,16 +333,30 @@
         #back-to-top:hover {
             transform: scale(1.1);
         }
+        #theme-toggle i {
+            transition: transform 0.3s;
+        }
+        #theme-toggle:hover i {
+            transform: rotate(20deg);
+        }
     </style>
 </head>
 <body class="antialiased">
+    <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center text-white z-50 opacity-100">
+        <img src="logo.png" alt="Loading Logo" class="w-24 h-24 mb-4 animate-spin-slow">
+        <h1 class="font-orbitron text-4xl mb-2">Bitcoin II</h1>
+        <p id="loading-hint" class="text-gray-400 text-lg px-6 text-center"></p>
+        <div id="loading-bar" class="mt-6">
+            <div id="loading-bar-inner"></div>
+        </div>
+    </div>
     <div class="spotlight"></div>
 
     <!-- Header -->
     <header class="fixed w-full top-0 z-50 glass-effect">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="#" class="text-xl font-bold text-white z-50 flex items-center space-x-3">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="logo.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
                 <span>Bitcoin II</span>
             </a>
             <div id="desktop-nav" class="hidden md:flex items-center space-x-8">
@@ -280,12 +366,17 @@
                 <a href="#mining" class="nav-link text-gray-300 hover:text-amber-500 transition">Mining</a>
                 <a href="#community" class="nav-link text-gray-300 hover:text-amber-500 transition">Community</a>
             </div>
-            <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
-                Get Wallet
-            </a>
-            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
-                <i id="menu-icon" class="fas fa-bars text-2xl"></i>
-            </button>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
+                    Get Wallet
+                </a>
+                <button id="theme-toggle" class="text-white focus:outline-none text-xl">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
+                    <i id="menu-icon" class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
         </nav>
     </header>
 
@@ -434,7 +525,7 @@
     <footer class="bg-black py-12">
         <div class="container mx-auto px-6 text-center text-gray-500">
              <a href="#" class="inline-block mb-4">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="logo.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
             </a>
             <p>&copy; 2025 Bitcoin II. A Community Project.</p>
         </div>
@@ -467,17 +558,36 @@
             }
 
             // --- INITIALIZATION ---
+            initLoadingScreen();
             initSpotlightEffect();
             initScrollAnimations();
             initNumberTicker();
             initFlipCards();
             init3dCoin();
             initParticleEffect();
+            initParallaxEffect();
             initMobileMenu();
             initActiveNavOnScroll();
             initBackToTopButton();
+            initThemeToggle();
 
             // --- FUNCTION DEFINITIONS ---
+
+            function initLoadingScreen() {
+                const hints = [
+                    'Use the theme button to switch modes.',
+                    'Double-click the coin to pause its spin.',
+                    'Tap a stat card to reveal numbers.'
+                ];
+                const hintEl = select('#loading-hint');
+                hintEl.innerText = hints[Math.floor(Math.random() * hints.length)];
+                setTimeout(() => {
+                    const screen = select('#loading-screen');
+                    screen.style.opacity = '0';
+                    screen.style.pointerEvents = 'none';
+                    setTimeout(() => screen.remove(), 1000);
+                }, 5000);
+            }
 
             function initSpotlightEffect() {
                 const spotlight = select('.spotlight');
@@ -581,6 +691,23 @@
                 });
             }
 
+            function initThemeToggle() {
+                const btn = select('#theme-toggle');
+                const icon = btn.querySelector('i');
+                const apply = (theme) => {
+                    document.body.classList.toggle('light', theme === 'light');
+                    icon.classList.toggle('fa-sun', theme === 'light');
+                    icon.classList.toggle('fa-moon', theme !== 'light');
+                    localStorage.setItem('theme', theme);
+                };
+                const saved = localStorage.getItem('theme');
+                if (saved === 'light') apply('light');
+                btn.addEventListener('click', () => {
+                    const newTheme = document.body.classList.contains('light') ? 'dark' : 'light';
+                    apply(newTheme);
+                });
+            }
+
             function init3dCoin() {
                 const coinCanvas = select('#coin-canvas');
                 if (!coinCanvas) return;
@@ -590,20 +717,15 @@
                 renderer.setSize(300, 300);
                 renderer.setPixelRatio(window.devicePixelRatio);
 
-                const geometry = new THREE.CylinderGeometry(5, 5, 1, 64);
-                const textCanvas = document.createElement('canvas');
-                textCanvas.width = 256; textCanvas.height = 256;
-                const textCtx = textCanvas.getContext('2d');
-                textCtx.fillStyle = '#DAA520'; textCtx.fillRect(0, 0, 256, 256);
-                textCtx.font = 'bold 128px Inter'; textCtx.fillStyle = 'rgba(0,0,0,0.5)';
-                textCtx.textAlign = 'center'; textCtx.textBaseline = 'middle';
-                textCtx.fillText('BII', 128, 128);
-                const faceTexture = new THREE.CanvasTexture(textCanvas);
+                const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 128);
+                const loader = new THREE.TextureLoader();
+                loader.crossOrigin = '';
+                const faceTexture = loader.load('logo.png');
 
                 const materials = [
-                    new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 }),
-                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 }),
-                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 })
+                    new THREE.MeshStandardMaterial({ color: 0xffc65a, metalness: 0.8, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 })
                 ];
                 const coin = new THREE.Mesh(geometry, materials);
                 scene.add(coin);
@@ -615,10 +737,11 @@
                 scene.add(pointLight);
                 camera.position.z = 10;
 
-                let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+                let isDragging = false, rotationPaused = false, previousMousePosition = { x: 0, y: 0 };
                 on('mousedown', coinCanvas, () => { isDragging = true; });
                 on('mouseup', window, () => { isDragging = false; });
-                on('mouseleave', coinCanvas, () => { isDragging = false; });
+                on('mouseleave', coinCanvas, () => { isDragging = false; coin.scale.set(1,1,1); });
+                on('mouseenter', coinCanvas, () => { coin.scale.set(1.1,1.1,1.1); });
                 on('mousemove', coinCanvas, (e) => {
                     if (!isDragging) return;
                     const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
@@ -626,10 +749,11 @@
                     coin.rotation.x += deltaMove.y * 0.005;
                     previousMousePosition = { x: e.offsetX, y: e.offsetY };
                 });
+                on('dblclick', coinCanvas, () => { rotationPaused = !rotationPaused; });
 
                 const animateCoin = () => {
                     requestAnimationFrame(animateCoin);
-                    if (!isDragging) {
+                    if (!isDragging && !rotationPaused) {
                         coin.rotation.y += 0.005;
                         coin.rotation.x += 0.001;
                     }
@@ -702,6 +826,15 @@
 
                 on('mousemove', window, (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
                 on('mouseout', window, () => { mouse.x = null; mouse.y = null; });
+            }
+
+            function initParallaxEffect() {
+                const particle = select('#particle-canvas');
+                if (!particle) return;
+                on('scroll', window, () => {
+                    const offset = window.scrollY * 0.2;
+                    particle.style.transform = `translateY(${offset}px)`;
+                });
             }
 
             window.copyCommand = function() {
