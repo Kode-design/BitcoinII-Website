@@ -14,7 +14,7 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #0b0b1a, #1a1a2d, #0b0b1a, #000);
+            background: linear-gradient(-45deg, #000000, #111111, #222222, #000000);
             background-size: 400% 400%;
             animation: gradientMove 30s ease infinite;
             color: #e5e5e5;
@@ -31,7 +31,7 @@
             background: radial-gradient(#ffffff11 1px, transparent 1px);
             background-size: 3px 3px;
             pointer-events: none;
-            animation: twinkle 5s ease-in-out infinite;
+            animation: twinkle 5s ease-in-out infinite, moveBackground 60s linear infinite;
             z-index: -1;
         }
         body::after {
@@ -40,6 +40,7 @@
             inset: 0;
             background: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 4px);
             pointer-events: none;
+            animation: moveBackground 60s linear infinite;
             opacity: 0.1;
             mix-blend-mode: overlay;
             z-index: -1;
@@ -48,13 +49,15 @@
             background: linear-gradient(-45deg, #ffffff, #f0f0ff, #ffffff, #e0e0f5);
             background-size: 400% 400%;
             animation: gradientMove 30s ease infinite;
-            color: #1a1a1a;
+            color: #000000;
         }
         body.light::before {
+            animation: twinkle 5s ease-in-out infinite, moveBackground 60s linear infinite;
             background: radial-gradient(#00000022 1px, transparent 1px);
         }
         body.light::after {
             background: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 4px);
+            animation: moveBackground 60s linear infinite;
         }
         body.loading {
             overflow: hidden;
@@ -63,6 +66,7 @@
             0%,100% { opacity: 0.2; }
             50% { opacity: 0.6; }
         }
+        @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 200px 200px; } }
         #loading-screen {
             background: radial-gradient(circle at center, #161616, #000);
             transition: opacity 1s ease, transform 1s ease;
@@ -89,7 +93,7 @@
             pointer-events: none;
         }
         @keyframes rotateStars { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        #loading-logo { animation: bounceIn 1s ease forwards; opacity: 0; }
+        #loading-coin { animation: bounceIn 1s ease forwards; opacity: 0; }
         @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
         #loading-bar {
             width: 70%;
@@ -158,7 +162,7 @@
         }
         .btn-primary {
             background-image: linear-gradient(to right, #f7931a, #f9a84a);
-            color: #1a1a1a;
+            color: #000000;
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             border: none;
@@ -300,7 +304,7 @@
         }
         body.light .hero-title {
             background: none;
-            -webkit-text-fill-color: #1a1a1a;
+            -webkit-text-fill-color: #000000;
             text-shadow: none;
         }
         .terminal-window {
@@ -382,13 +386,13 @@
             text-shadow: 0 0 8px rgba(247, 147, 26, 0.7);
         }
         body.light .nav-link {
-            color: #1a1a1a;
+            color: #000000;
         }
         body.light .text-white {
-            color: #1a1a1a !important;
+            color: #000000 !important;
         }
         body.light .text-gray-400 {
-            color: #4a4a4a !important;
+            color: #000000 !important;
         }
         #back-to-top {
             position: fixed;
@@ -425,7 +429,7 @@
 </head>
 <body class="antialiased loading">
     <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center text-white z-50 opacity-100">
-        <img id="loading-logo" src="logo.png" alt="Loading Logo" class="w-24 h-24 mb-4 animate-spin-slow">
+        <canvas id="loading-coin" width="120" height="120" class="mb-4"></canvas>
         <h1 class="font-orbitron text-4xl mb-2 tracking-widest">Bitcoin II</h1>
         <p id="loading-hint" class="text-gray-400 text-lg px-6 text-center"></p>
         <div id="loading-bar" class="mt-6">
@@ -657,6 +661,7 @@
 
             function initLoadingScreen() {
                 document.body.classList.add('loading');
+                initLoadingCoin();
                 const hints = [
                     'Use the theme button to switch modes.',
                     'Double-click the coin to pause its spin.',
@@ -847,6 +852,37 @@
                     renderer.render(scene, camera);
                 }
                 animateCoin();
+            }
+
+            function initLoadingCoin() {
+                const canvas = select('#loading-coin');
+                if (!canvas) return;
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+                renderer.setSize(canvas.width, canvas.height);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 64);
+                const texture = new THREE.TextureLoader().load('logo.png');
+                const materials = [
+                    new THREE.MeshStandardMaterial({ color: 0xffc65a, metalness: 0.8, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 }),
+                    new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 })
+                ];
+                const coin = new THREE.Mesh(geometry, materials);
+                scene.add(coin);
+                const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+                scene.add(ambient);
+                const light = new THREE.PointLight(0xffffff, 1);
+                light.position.set(5, 10, 10);
+                scene.add(light);
+                camera.position.z = 10;
+                const animate = () => {
+                    requestAnimationFrame(animate);
+                    coin.rotation.y += 0.02;
+                    renderer.render(scene, camera);
+                };
+                animate();
             }
             
             function initParticleEffect() {

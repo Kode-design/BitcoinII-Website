@@ -11,12 +11,13 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Optional light/dark theme toggle
 - Animated gradient background
 - Pause the 3D coin by double-clicking it
-- Improved light theme with readable colors
-- Initial loading screen with random hints and a progress bar
+- Improved light theme with pure black text for readability
+- Initial loading screen with a spinning 3D coin, random hints and a progress bar
 - Subtle parallax effect on the hero background
 - Coin scales slightly on hover for extra flair
 - Starry overlay background with a twinkling animation
-- Loading screen now has a starfield and moving striped progress bar
+- Dark mode uses a deep gray gradient background
+- Subtle animated background textures
 - Hero title gently floats for a playful feel
 - Stat cards lift slightly on hover
 - Loading overlay hides the page scroll bar during initialization
