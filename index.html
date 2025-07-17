@@ -394,6 +394,10 @@
         body.light .text-gray-400 {
             color: #000000 !important;
         }
+        body.light .text-gray-300,
+        body.light .text-gray-500 {
+            color: #000000 !important;
+        }
         #back-to-top {
             position: fixed;
             bottom: 2rem;
@@ -671,14 +675,20 @@
                 ];
                 const hintEl = select('#loading-hint');
                 hintEl.innerText = hints[Math.floor(Math.random() * hints.length)];
-                setTimeout(() => {
+
+                const hideScreen = () => {
                     const screen = select('#loading-screen');
+                    if (!screen) return;
                     screen.classList.add('fade-out');
                     setTimeout(() => {
                         screen.remove();
                         document.body.classList.remove('loading');
                     }, 1000);
-                }, 5000);
+                };
+
+                const startTimer = () => setTimeout(hideScreen, 5000);
+                if (document.readyState === 'complete') startTimer();
+                else window.addEventListener('load', startTimer);
             }
 
             function initSpotlightEffect() {
