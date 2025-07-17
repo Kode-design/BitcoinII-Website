@@ -112,6 +112,9 @@
             animation: loadingProgress 5s linear forwards, moveStripe 1s linear infinite, pulseBar 2s ease-in-out infinite;
             border-radius: 9999px;
         }
+        #loading-percent {
+            text-shadow: 0 0 6px rgba(0,0,0,0.4);
+        }
         @keyframes pulseBar { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.2); } }
         @keyframes loadingProgress { from { width: 0%; } to { width: 100%; } }
         @keyframes moveStripe { from { background-position: 0 0; } to { background-position: 1rem 0; } }
@@ -439,6 +442,7 @@
         <div id="loading-bar" class="mt-6">
             <div id="loading-bar-inner"></div>
         </div>
+        <span id="loading-percent" class="font-orbitron text-lg mt-2">0%</span>
     </div>
     <div class="spotlight"></div>
 
@@ -679,6 +683,7 @@
                     const screen = select('#loading-screen');
                     if (!screen) return;
                     screen.classList.add('fade-out');
+                    clearInterval(progressInterval);
                     setTimeout(() => {
                         screen.remove();
                         document.body.classList.remove('loading');
@@ -688,9 +693,17 @@
                 let coinReady = false;
                 let pageLoaded = document.readyState === 'complete';
                 let timerStarted = false;
+                const percentEl = select('#loading-percent');
+                let progressInterval;
                 const tryStart = () => {
                     if (coinReady && pageLoaded && !timerStarted) {
                         timerStarted = true;
+                        const start = Date.now();
+                        progressInterval = setInterval(() => {
+                            const pct = Math.min(100, Math.round(((Date.now() - start) / 5000) * 100));
+                            if (percentEl) percentEl.innerText = pct + '%';
+                            if (pct >= 100) clearInterval(progressInterval);
+                        }, 100);
                         setTimeout(hideScreen, 5000);
                     }
                 };
