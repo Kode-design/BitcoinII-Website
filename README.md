@@ -13,7 +13,7 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Animated gradient background
 - Pause the 3D coin by double-clicking it
 - Improved light theme with pure black text for readability
-- Initial loading screen with a spinning 3D coin, random hints and a progress bar
+- Initial loading screen featuring the project logo, random hints and a progress bar
   that shows an accurate percentage
 - Subtle parallax effect on the hero background
 - Coin scales slightly on hover for extra flair
@@ -24,7 +24,8 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Stat cards lift slightly on hover
 - Loading overlay hides the page scroll bar during initialization
 - Glass-effect components have subtle drop shadows
-- Loading screen remains visible for five seconds after the page and coin are ready
+- Spotlight cursor effect throttled for smooth performance
+- Loading screen remains visible for five seconds after the page is ready
 - Coin colors closely match the Bitcoin II logo for a consistent look
 - Copy command button uses the modern Clipboard API when available
 
