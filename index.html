@@ -14,10 +14,58 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            background: linear-gradient(-45deg, #000000, #111111, #222222, #000000);
+            background-size: 400% 400%;
+            animation: gradientMove 30s ease infinite;
             color: #e5e5e5;
             overflow-x: hidden;
+            position: relative;
         }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(#ffffff11 1px, transparent 1px);
+            background-size: 3px 3px;
+            pointer-events: none;
+            animation: twinkle 5s ease-in-out infinite, moveBackground 60s linear infinite;
+            z-index: -1;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 4px);
+            pointer-events: none;
+            animation: moveBackground 60s linear infinite;
+            opacity: 0.1;
+            mix-blend-mode: overlay;
+            z-index: -1;
+        }
+        body.light {
+            background: linear-gradient(-45deg, #ffffff, #f0f0ff, #ffffff, #e0e0f5);
+            background-size: 400% 400%;
+            animation: gradientMove 30s ease infinite;
+            color: #000000;
+        }
+        body.light::before {
+            animation: twinkle 5s ease-in-out infinite, moveBackground 60s linear infinite;
+            background: radial-gradient(#00000022 1px, transparent 1px);
+        }
+        body.light::after {
+            background: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 4px);
+            animation: moveBackground 60s linear infinite;
+        }
+        @keyframes twinkle {
+            0%,100% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+        }
+        @keyframes moveBackground { from { background-position: 0 0; } to { background-position: 200px 200px; } }
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spinSlow 8s linear infinite; }
         .spotlight {
             position: fixed;
             top: 0;
@@ -36,10 +84,16 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+        }
+        body.light .glass-effect {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.1);
         }
         .hero-gradient {
-            background: radial-gradient(ellipse at 50% 0%, rgba(247, 147, 26, 0.2) 0%, rgba(10, 10, 10, 0) 50%);
+            background: radial-gradient(ellipse at 50% -10%, rgba(247, 147, 26, 0.3) 0%, rgba(10, 10, 10, 0) 60%), linear-gradient(120deg, rgba(255,255,255,0.05), transparent);
             position: relative;
+            overflow: hidden;
         }
         #particle-canvas {
             position: absolute;
@@ -56,7 +110,7 @@
         }
         .btn-primary {
             background-image: linear-gradient(to right, #f7931a, #f9a84a);
-            color: #1a1a1a;
+            color: #000000;
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             border: none;
@@ -75,6 +129,14 @@
             background-color: #f7931a;
             color: #0a0a0a;
             box-shadow: 0 0 20px rgba(247, 147, 26, 0.4);
+        }
+
+        .stat-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
         
         /* Flip Card */
@@ -182,9 +244,16 @@
             cursor: grabbing;
         }
         .hero-title {
-            background: -webkit-linear-gradient(45deg, #f7931a, #f9a84a, #e5e5e5);
+            background: linear-gradient(45deg, #f7931a, #ffc65a, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(247, 147, 26, 0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+        body.light .hero-title {
+            background: none;
+            -webkit-text-fill-color: #000000;
+            text-shadow: none;
         }
         .terminal-window {
             background-color: #0D1117;
@@ -192,12 +261,19 @@
             border-radius: 0.5rem;
             overflow: hidden;
         }
+        body.light .terminal-window {
+            background-color: #f5f5f5;
+            border-color: #ddd;
+        }
         .terminal-header {
             background-color: #161B22;
             padding: 0.5rem 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+        body.light .terminal-header {
+            background-color: #eee;
         }
         .terminal-dot {
             width: 12px;
@@ -224,17 +300,51 @@
             background-color: #30363D;
             border-color: #8B949E;
         }
+        body.light .copy-btn {
+            background-color: #f0f0f0;
+            border-color: #ccc;
+            color: #333;
+        }
+        body.light .copy-btn:hover {
+            background-color: #e0e0e0;
+            border-color: #bbb;
+        }
         .social-icon:hover {
             animation: bounce 0.6s ease;
+        }
+        body.light .social-icon {
+            color: #555;
         }
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
             40% {transform: translateY(-10px);}
             60% {transform: translateY(-5px);}
         }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
         .nav-link:hover, .nav-link.active {
             color: #f7931a;
             text-shadow: 0 0 8px rgba(247, 147, 26, 0.7);
+        }
+        body.light .nav-link {
+            color: #000000;
+        }
+        body.light .text-white {
+            color: #000000 !important;
+        }
+        body.light .text-gray-400 {
+            color: #000000 !important;
+        }
+        body.light .text-gray-300,
+        body.light .text-gray-500 {
+            color: #000000 !important;
         }
         #back-to-top {
             position: fixed;
@@ -261,6 +371,12 @@
         #back-to-top:hover {
             transform: scale(1.1);
         }
+        #theme-toggle i {
+            transition: transform 0.3s;
+        }
+        #theme-toggle:hover i {
+            transform: rotate(20deg);
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -270,7 +386,7 @@
     <header class="fixed w-full top-0 z-50 glass-effect">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="#" class="text-xl font-bold text-white z-50 flex items-center space-x-3">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="logo.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
                 <span>Bitcoin II</span>
             </a>
             <div id="desktop-nav" class="hidden md:flex items-center space-x-8">
@@ -280,12 +396,17 @@
                 <a href="#mining" class="nav-link text-gray-300 hover:text-amber-500 transition">Mining</a>
                 <a href="#community" class="nav-link text-gray-300 hover:text-amber-500 transition">Community</a>
             </div>
-            <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
-                Get Wallet
-            </a>
-            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
-                <i id="menu-icon" class="fas fa-bars text-2xl"></i>
-            </button>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
+                    Get Wallet
+                </a>
+                <button id="theme-toggle" aria-label="Toggle theme" class="text-white focus:outline-none text-xl">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
+                    <i id="menu-icon" class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
         </nav>
     </header>
 
@@ -434,7 +555,7 @@
     <footer class="bg-black py-12">
         <div class="container mx-auto px-6 text-center text-gray-500">
              <a href="#" class="inline-block mb-4">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="logo.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
             </a>
             <p>&copy; 2025 Bitcoin II. A Community Project.</p>
         </div>
@@ -448,15 +569,11 @@
             const select = (el, all = false) => {
                 if (typeof el !== 'string') return el;
                 el = el.trim();
-                if (all) {
-                    return [...document.querySelectorAll(el)];
-                } else {
-                    return document.querySelector(el);
-                }
-            }
+                return all ? [...document.querySelectorAll(el)] : document.querySelector(el);
+            };
 
             const on = (type, el, listener, all = false) => {
-                let selectEl = select(el, all);
+                const selectEl = select(el, all);
                 if (selectEl) {
                     if (all && selectEl.forEach) {
                         selectEl.forEach(e => e.addEventListener(type, listener));
@@ -464,7 +581,8 @@
                         selectEl.addEventListener(type, listener);
                     }
                 }
-            }
+            };
+
 
             // --- INITIALIZATION ---
             initSpotlightEffect();
@@ -473,11 +591,14 @@
             initFlipCards();
             init3dCoin();
             initParticleEffect();
+            initParallaxEffect();
             initMobileMenu();
             initActiveNavOnScroll();
             initBackToTopButton();
+            initThemeToggle();
 
             // --- FUNCTION DEFINITIONS ---
+
 
             function initSpotlightEffect() {
                 const spotlight = select('.spotlight');
@@ -552,7 +673,7 @@
                 const sections = select('section', true);
                 const navLinks = select('#desktop-nav .nav-link', true);
                 
-                on('scroll', window, () => {
+                const update = () => {
                     let current = 'home';
                     sections.forEach(section => {
                         const sectionTop = section.offsetTop;
@@ -567,17 +688,40 @@
                             link.classList.add('active');
                         }
                     });
-                });
+                };
+                on('scroll', window, update);
             }
 
             function initBackToTopButton() {
                 const backToTopButton = select('#back-to-top');
-                on('scroll', window, () => {
+                const toggleBtn = () => {
                     if (window.scrollY > 300) {
                         backToTopButton.classList.add('visible');
                     } else {
                         backToTopButton.classList.remove('visible');
                     }
+                };
+                on('scroll', window, toggleBtn);
+            }
+
+            function initThemeToggle() {
+                const btn = select('#theme-toggle');
+                const icon = btn.querySelector('i');
+                const apply = (theme) => {
+                    document.body.classList.toggle('light', theme === 'light');
+                    icon.classList.toggle('fa-sun', theme === 'light');
+                    icon.classList.toggle('fa-moon', theme !== 'light');
+                    localStorage.setItem('theme', theme);
+                };
+                const saved = localStorage.getItem('theme');
+                if (saved) {
+                    apply(saved);
+                } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    apply('light');
+                }
+                btn.addEventListener('click', () => {
+                    const newTheme = document.body.classList.contains('light') ? 'dark' : 'light';
+                    apply(newTheme);
                 });
             }
 
@@ -590,20 +734,15 @@
                 renderer.setSize(300, 300);
                 renderer.setPixelRatio(window.devicePixelRatio);
 
-                const geometry = new THREE.CylinderGeometry(5, 5, 1, 64);
-                const textCanvas = document.createElement('canvas');
-                textCanvas.width = 256; textCanvas.height = 256;
-                const textCtx = textCanvas.getContext('2d');
-                textCtx.fillStyle = '#DAA520'; textCtx.fillRect(0, 0, 256, 256);
-                textCtx.font = 'bold 128px Inter'; textCtx.fillStyle = 'rgba(0,0,0,0.5)';
-                textCtx.textAlign = 'center'; textCtx.textBaseline = 'middle';
-                textCtx.fillText('BII', 128, 128);
-                const faceTexture = new THREE.CanvasTexture(textCanvas);
+                const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 128);
+                const loader = new THREE.TextureLoader();
+                loader.crossOrigin = '';
+                const faceTexture = loader.load('logo.png');
 
                 const materials = [
-                    new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 }),
-                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 }),
-                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 })
+                    new THREE.MeshStandardMaterial({ color: 0xf7931a, metalness: 0.8, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 })
                 ];
                 const coin = new THREE.Mesh(geometry, materials);
                 scene.add(coin);
@@ -615,10 +754,11 @@
                 scene.add(pointLight);
                 camera.position.z = 10;
 
-                let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+                let isDragging = false, rotationPaused = false, previousMousePosition = { x: 0, y: 0 };
                 on('mousedown', coinCanvas, () => { isDragging = true; });
                 on('mouseup', window, () => { isDragging = false; });
-                on('mouseleave', coinCanvas, () => { isDragging = false; });
+                on('mouseleave', coinCanvas, () => { isDragging = false; coin.scale.set(1,1,1); });
+                on('mouseenter', coinCanvas, () => { coin.scale.set(1.1,1.1,1.1); });
                 on('mousemove', coinCanvas, (e) => {
                     if (!isDragging) return;
                     const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
@@ -626,10 +766,11 @@
                     coin.rotation.x += deltaMove.y * 0.005;
                     previousMousePosition = { x: e.offsetX, y: e.offsetY };
                 });
+                on('dblclick', coinCanvas, () => { rotationPaused = !rotationPaused; });
 
                 const animateCoin = () => {
                     requestAnimationFrame(animateCoin);
-                    if (!isDragging) {
+                    if (!isDragging && !rotationPaused) {
                         coin.rotation.y += 0.005;
                         coin.rotation.x += 0.001;
                     }
@@ -637,6 +778,7 @@
                 }
                 animateCoin();
             }
+
             
             function initParticleEffect() {
                 const particleCanvas = select('#particle-canvas');
@@ -700,19 +842,39 @@
                 animateParticles();
                 on('resize', window, resizeCanvas);
 
-                on('mousemove', window, (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+                const moveMouse = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+                on('mousemove', window, moveMouse);
                 on('mouseout', window, () => { mouse.x = null; mouse.y = null; });
+            }
+
+            function initParallaxEffect() {
+                const particle = select('#particle-canvas');
+                if (!particle) return;
+                const handleScroll = () => {
+                    const offset = window.scrollY * 0.2;
+                    particle.style.transform = `translateY(${offset}px)`;
+                };
+                on('scroll', window, handleScroll);
             }
 
             window.copyCommand = function() {
                 const commandText = select('#addnode-command').innerText;
-                const textarea = document.createElement('textarea');
-                textarea.value = commandText;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                
+                const doCopy = (text) => {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.top = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                };
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(commandText);
+                } else {
+                    doCopy(commandText);
+                }
+
                 const btn = select('.copy-btn');
                 btn.innerText = 'Copied!';
                 setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
