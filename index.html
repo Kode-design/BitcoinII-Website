@@ -640,15 +640,11 @@
             const select = (el, all = false) => {
                 if (typeof el !== 'string') return el;
                 el = el.trim();
-                if (all) {
-                    return [...document.querySelectorAll(el)];
-                } else {
-                    return document.querySelector(el);
-                }
-            }
+                return all ? [...document.querySelectorAll(el)] : document.querySelector(el);
+            };
 
             const on = (type, el, listener, all = false) => {
-                let selectEl = select(el, all);
+                const selectEl = select(el, all);
                 if (selectEl) {
                     if (all && selectEl.forEach) {
                         selectEl.forEach(e => e.addEventListener(type, listener));
@@ -656,7 +652,20 @@
                         selectEl.addEventListener(type, listener);
                     }
                 }
-            }
+            };
+
+            const throttleRaf = (fn) => {
+                let ticking = false;
+                return function(...args) {
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            fn.apply(this, args);
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                };
+            };
 
             // --- INITIALIZATION ---
             initLoadingScreen();
@@ -767,7 +776,7 @@
                 const target = parseFloat(element.getAttribute('data-target'));
                 const duration = 2000;
                 let start = 0;
-                const stepTime = 1000 / 60;
+                const stepTime = 33;
                 const steps = duration / stepTime;
                 const increment = (target - start) / steps;
                 
@@ -804,7 +813,7 @@
                 const sections = select('section', true);
                 const navLinks = select('#desktop-nav .nav-link', true);
                 
-                on('scroll', window, () => {
+                const update = () => {
                     let current = 'home';
                     sections.forEach(section => {
                         const sectionTop = section.offsetTop;
@@ -819,18 +828,20 @@
                             link.classList.add('active');
                         }
                     });
-                });
+                };
+                on('scroll', window, throttleRaf(update));
             }
 
             function initBackToTopButton() {
                 const backToTopButton = select('#back-to-top');
-                on('scroll', window, () => {
+                const toggleBtn = () => {
                     if (window.scrollY > 300) {
                         backToTopButton.classList.add('visible');
                     } else {
                         backToTopButton.classList.remove('visible');
                     }
-                });
+                };
+                on('scroll', window, throttleRaf(toggleBtn));
             }
 
             function initThemeToggle() {
@@ -861,7 +872,7 @@
                 const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
                 const renderer = new THREE.WebGLRenderer({ canvas: coinCanvas, alpha: true });
                 renderer.setSize(300, 300);
-                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
                 const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 128);
                 const loader = new THREE.TextureLoader();
@@ -897,13 +908,17 @@
                 });
                 on('dblclick', coinCanvas, () => { rotationPaused = !rotationPaused; });
 
-                const animateCoin = () => {
+                let lastCoinTime = 0;
+                const animateCoin = (t) => {
                     requestAnimationFrame(animateCoin);
-                    if (!isDragging && !rotationPaused) {
-                        coin.rotation.y += 0.005;
-                        coin.rotation.x += 0.001;
+                    if (t - lastCoinTime > 33) {
+                        if (!isDragging && !rotationPaused) {
+                            coin.rotation.y += 0.005;
+                            coin.rotation.x += 0.001;
+                        }
+                        renderer.render(scene, camera);
+                        lastCoinTime = t;
                     }
-                    renderer.render(scene, camera);
                 }
                 animateCoin();
             }
@@ -955,15 +970,19 @@
                 
                 function initParticles() {
                     particles = [];
-                    let numberOfParticles = (particleCanvas.height * particleCanvas.width) / 9000;
+                    let numberOfParticles = (particleCanvas.height * particleCanvas.width) / 12000;
                     for (let i = 0; i < numberOfParticles; i++) {
                         particles.push(new Particle());
                     }
                 }
 
-                const animateParticles = () => {
-                    pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-                    particles.forEach(p => { p.update(); p.draw(); });
+                let lastTime = 0;
+                const animateParticles = (t) => {
+                    if (t - lastTime > 33) {
+                        pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+                        particles.forEach(p => { p.update(); p.draw(); });
+                        lastTime = t;
+                    }
                     requestAnimationFrame(animateParticles);
                 }
 
@@ -971,17 +990,19 @@
                 animateParticles();
                 on('resize', window, resizeCanvas);
 
-                on('mousemove', window, (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+                const moveMouse = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+                on('mousemove', window, throttleRaf(moveMouse));
                 on('mouseout', window, () => { mouse.x = null; mouse.y = null; });
             }
 
             function initParallaxEffect() {
                 const particle = select('#particle-canvas');
                 if (!particle) return;
-                on('scroll', window, () => {
+                const handleScroll = () => {
                     const offset = window.scrollY * 0.2;
                     particle.style.transform = `translateY(${offset}px)`;
-                });
+                };
+                on('scroll', window, throttleRaf(handleScroll));
             }
 
             window.copyCommand = function() {
