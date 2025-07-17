@@ -43,15 +43,23 @@
         body.light::before {
             background: radial-gradient(#00000022 1px, transparent 1px);
         }
+        body.loading {
+            overflow: hidden;
+        }
         @keyframes twinkle {
             0%,100% { opacity: 0.2; }
             50% { opacity: 0.6; }
         }
         #loading-screen {
-            background: #000;
+            background: radial-gradient(circle at center, #161616, #000);
             transition: opacity 1s ease, transform 1s ease;
             position: fixed;
             inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
         #loading-screen.fade-out {
             opacity: 0;
@@ -62,17 +70,18 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(#ffffff33 1px, transparent 1px);
-            background-size: 4px 4px;
+            background: radial-gradient(#ffffff44 1px, transparent 1px);
+            background-size: 6px 6px;
             animation: twinkle 3s ease-in-out infinite;
             pointer-events: none;
         }
         #loading-bar {
-            width: 80%;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
+            width: 70%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
             border-radius: 9999px;
             overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
         }
         #loading-bar-inner {
             height: 100%;
@@ -81,6 +90,7 @@
             background-image: linear-gradient(45deg, rgba(255,255,255,0.3) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.3) 75%, transparent 75%, transparent);
             background-size: 1rem 1rem;
             animation: loadingProgress 5s linear forwards, moveStripe 1s linear infinite;
+            border-radius: 9999px;
         }
         @keyframes loadingProgress { from { width: 0%; } to { width: 100%; } }
         @keyframes moveStripe { from { background-position: 0 0; } to { background-position: 1rem 0; } }
@@ -105,6 +115,7 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
         }
         body.light .glass-effect {
             background: rgba(255, 255, 255, 0.6);
@@ -394,7 +405,7 @@
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased loading">
     <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center text-white z-50 opacity-100">
         <img src="logo.png" alt="Loading Logo" class="w-24 h-24 mb-4 animate-spin-slow">
         <h1 class="font-orbitron text-4xl mb-2">Bitcoin II</h1>
@@ -627,6 +638,7 @@
             // --- FUNCTION DEFINITIONS ---
 
             function initLoadingScreen() {
+                document.body.classList.add('loading');
                 const hints = [
                     'Use the theme button to switch modes.',
                     'Double-click the coin to pause its spin.',
@@ -639,7 +651,10 @@
                 setTimeout(() => {
                     const screen = select('#loading-screen');
                     screen.classList.add('fade-out');
-                    setTimeout(() => screen.remove(), 1000);
+                    setTimeout(() => {
+                        screen.remove();
+                        document.body.classList.remove('loading');
+                    }, 1000);
                 }, 5000);
             }
 
