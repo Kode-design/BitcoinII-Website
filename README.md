@@ -9,6 +9,7 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Animated particle background and scroll reveal effects
 - Mobile navigation menu
 - Optional light/dark theme toggle
+- Automatically detects your system theme preference
 - Animated gradient background
 - Pause the 3D coin by double-clicking it
 - Improved light theme with pure black text for readability
@@ -24,6 +25,7 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Glass-effect components have subtle drop shadows
 - Loading screen remains visible for five seconds after the page and coin are ready
 - Coin colors closely match the Bitcoin II logo for a consistent look
+- Copy command button uses the modern Clipboard API when available
 
 ## Usage
 

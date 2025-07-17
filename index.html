@@ -460,7 +460,7 @@
                 <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
                     Get Wallet
                 </a>
-                <button id="theme-toggle" class="text-white focus:outline-none text-xl">
+                <button id="theme-toggle" aria-label="Toggle theme" class="text-white focus:outline-none text-xl">
                     <i class="fas fa-moon"></i>
                 </button>
                 <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
@@ -817,7 +817,11 @@
                     localStorage.setItem('theme', theme);
                 };
                 const saved = localStorage.getItem('theme');
-                if (saved === 'light') apply('light');
+                if (saved) {
+                    apply(saved);
+                } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    apply('light');
+                }
                 btn.addEventListener('click', () => {
                     const newTheme = document.body.classList.contains('light') ? 'dark' : 'light';
                     apply(newTheme);
@@ -988,13 +992,22 @@
 
             window.copyCommand = function() {
                 const commandText = select('#addnode-command').innerText;
-                const textarea = document.createElement('textarea');
-                textarea.value = commandText;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                
+                const doCopy = (text) => {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.top = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                };
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(commandText);
+                } else {
+                    doCopy(commandText);
+                }
+
                 const btn = select('.copy-btn');
                 btn.innerText = 'Copied!';
                 setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
