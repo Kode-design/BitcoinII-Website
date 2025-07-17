@@ -14,9 +14,17 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            background: linear-gradient(-45deg, #1a1a1a, #0d0d0d, #1a1a1a, #0a0a0a);
+            background-size: 400% 400%;
+            animation: gradientMove 30s ease infinite;
             color: #e5e5e5;
             overflow-x: hidden;
+        }
+        body.light {
+            background: linear-gradient(-45deg, #ffffff, #e5e5e5, #ffffff, #f0f0f0);
+            background-size: 400% 400%;
+            animation: gradientMove 30s ease infinite;
+            color: #1a1a1a;
         }
         .spotlight {
             position: fixed;
@@ -36,6 +44,10 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.light .glass-effect {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.1);
         }
         .hero-gradient {
             background: radial-gradient(ellipse at 50% 0%, rgba(247, 147, 26, 0.2) 0%, rgba(10, 10, 10, 0) 50%);
@@ -186,11 +198,19 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        body.light .hero-title {
+            background: none;
+            -webkit-text-fill-color: #1a1a1a;
+        }
         .terminal-window {
             background-color: #0D1117;
             border: 1px solid #30363D;
             border-radius: 0.5rem;
             overflow: hidden;
+        }
+        body.light .terminal-window {
+            background-color: #f5f5f5;
+            border-color: #ddd;
         }
         .terminal-header {
             background-color: #161B22;
@@ -198,6 +218,9 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+        body.light .terminal-header {
+            background-color: #eee;
         }
         .terminal-dot {
             width: 12px;
@@ -224,17 +247,43 @@
             background-color: #30363D;
             border-color: #8B949E;
         }
+        body.light .copy-btn {
+            background-color: #f0f0f0;
+            border-color: #ccc;
+            color: #333;
+        }
+        body.light .copy-btn:hover {
+            background-color: #e0e0e0;
+            border-color: #bbb;
+        }
         .social-icon:hover {
             animation: bounce 0.6s ease;
+        }
+        body.light .social-icon {
+            color: #555;
         }
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
             40% {transform: translateY(-10px);}
             60% {transform: translateY(-5px);}
         }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         .nav-link:hover, .nav-link.active {
             color: #f7931a;
             text-shadow: 0 0 8px rgba(247, 147, 26, 0.7);
+        }
+        body.light .nav-link {
+            color: #1a1a1a;
+        }
+        body.light .text-white {
+            color: #1a1a1a !important;
+        }
+        body.light .text-gray-400 {
+            color: #4a4a4a !important;
         }
         #back-to-top {
             position: fixed;
@@ -261,6 +310,12 @@
         #back-to-top:hover {
             transform: scale(1.1);
         }
+        #theme-toggle i {
+            transition: transform 0.3s;
+        }
+        #theme-toggle:hover i {
+            transform: rotate(20deg);
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -280,12 +335,17 @@
                 <a href="#mining" class="nav-link text-gray-300 hover:text-amber-500 transition">Mining</a>
                 <a href="#community" class="nav-link text-gray-300 hover:text-amber-500 transition">Community</a>
             </div>
-            <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
-                Get Wallet
-            </a>
-            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
-                <i id="menu-icon" class="fas fa-bars text-2xl"></i>
-            </button>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
+                    Get Wallet
+                </a>
+                <button id="theme-toggle" class="text-white focus:outline-none text-xl">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-50">
+                    <i id="menu-icon" class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
         </nav>
     </header>
 
@@ -476,6 +536,7 @@
             initMobileMenu();
             initActiveNavOnScroll();
             initBackToTopButton();
+            initThemeToggle();
 
             // --- FUNCTION DEFINITIONS ---
 
@@ -581,6 +642,23 @@
                 });
             }
 
+            function initThemeToggle() {
+                const btn = select('#theme-toggle');
+                const icon = btn.querySelector('i');
+                const apply = (theme) => {
+                    document.body.classList.toggle('light', theme === 'light');
+                    icon.classList.toggle('fa-sun', theme === 'light');
+                    icon.classList.toggle('fa-moon', theme !== 'light');
+                    localStorage.setItem('theme', theme);
+                };
+                const saved = localStorage.getItem('theme');
+                if (saved === 'light') apply('light');
+                btn.addEventListener('click', () => {
+                    const newTheme = document.body.classList.contains('light') ? 'dark' : 'light';
+                    apply(newTheme);
+                });
+            }
+
             function init3dCoin() {
                 const coinCanvas = select('#coin-canvas');
                 if (!coinCanvas) return;
@@ -610,7 +688,7 @@
                 scene.add(pointLight);
                 camera.position.z = 10;
 
-                let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+                let isDragging = false, rotationPaused = false, previousMousePosition = { x: 0, y: 0 };
                 on('mousedown', coinCanvas, () => { isDragging = true; });
                 on('mouseup', window, () => { isDragging = false; });
                 on('mouseleave', coinCanvas, () => { isDragging = false; });
@@ -621,10 +699,11 @@
                     coin.rotation.x += deltaMove.y * 0.005;
                     previousMousePosition = { x: e.offsetX, y: e.offsetY };
                 });
+                on('dblclick', coinCanvas, () => { rotationPaused = !rotationPaused; });
 
                 const animateCoin = () => {
                     requestAnimationFrame(animateCoin);
-                    if (!isDragging) {
+                    if (!isDragging && !rotationPaused) {
                         coin.rotation.y += 0.005;
                         coin.rotation.x += 0.001;
                     }
