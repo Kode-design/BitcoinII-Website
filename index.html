@@ -665,7 +665,6 @@
 
             function initLoadingScreen() {
                 document.body.classList.add('loading');
-                initLoadingCoin();
                 const hints = [
                     'Use the theme button to switch modes.',
                     'Double-click the coin to pause its spin.',
@@ -686,9 +685,20 @@
                     }, 1000);
                 };
 
-                const startTimer = () => setTimeout(hideScreen, 5000);
-                if (document.readyState === 'complete') startTimer();
-                else window.addEventListener('load', startTimer);
+                let coinReady = false;
+                let pageLoaded = document.readyState === 'complete';
+                const tryStart = () => {
+                    if (coinReady && pageLoaded) setTimeout(hideScreen, 5000);
+                };
+                initLoadingCoin(() => {
+                    coinReady = true;
+                    tryStart();
+                });
+                if (pageLoaded) tryStart();
+                else window.addEventListener('load', () => {
+                    pageLoaded = true;
+                    tryStart();
+                });
             }
 
             function initSpotlightEffect() {
@@ -825,7 +835,7 @@
                 const faceTexture = loader.load('logo.png');
 
                 const materials = [
-                    new THREE.MeshStandardMaterial({ color: 0xffc65a, metalness: 0.8, roughness: 0.3 }),
+                    new THREE.MeshStandardMaterial({ color: 0xf3b03d, metalness: 0.8, roughness: 0.3 }),
                     new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 }),
                     new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 })
                 ];
@@ -864,35 +874,37 @@
                 animateCoin();
             }
 
-            function initLoadingCoin() {
+            function initLoadingCoin(onReady) {
                 const canvas = select('#loading-coin');
-                if (!canvas) return;
+                if (!canvas) { if (onReady) onReady(); return; }
                 const scene = new THREE.Scene();
                 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
                 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
                 renderer.setSize(canvas.width, canvas.height);
                 renderer.setPixelRatio(window.devicePixelRatio);
                 const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 64);
-                const texture = new THREE.TextureLoader().load('logo.png');
-                const materials = [
-                    new THREE.MeshStandardMaterial({ color: 0xffc65a, metalness: 0.8, roughness: 0.3 }),
-                    new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 }),
-                    new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 })
-                ];
-                const coin = new THREE.Mesh(geometry, materials);
-                scene.add(coin);
-                const ambient = new THREE.AmbientLight(0xffffff, 0.8);
-                scene.add(ambient);
-                const light = new THREE.PointLight(0xffffff, 1);
-                light.position.set(5, 10, 10);
-                scene.add(light);
-                camera.position.z = 10;
-                const animate = () => {
-                    requestAnimationFrame(animate);
-                    coin.rotation.y += 0.02;
-                    renderer.render(scene, camera);
-                };
-                animate();
+                new THREE.TextureLoader().load('logo.png', (texture) => {
+                    const materials = [
+                        new THREE.MeshStandardMaterial({ color: 0xf3b03d, metalness: 0.8, roughness: 0.3 }),
+                        new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 }),
+                        new THREE.MeshStandardMaterial({ map: texture, metalness: 0.6, roughness: 0.4 })
+                    ];
+                    const coin = new THREE.Mesh(geometry, materials);
+                    scene.add(coin);
+                    const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+                    scene.add(ambient);
+                    const light = new THREE.PointLight(0xffffff, 1);
+                    light.position.set(5, 10, 10);
+                    scene.add(light);
+                    camera.position.z = 10;
+                    const animate = () => {
+                        requestAnimationFrame(animate);
+                        coin.rotation.y += 0.02;
+                        renderer.render(scene, camera);
+                    };
+                    animate();
+                    if (onReady) onReady();
+                });
             }
             
             function initParticleEffect() {
