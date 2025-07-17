@@ -270,7 +270,7 @@
     <header class="fixed w-full top-0 z-50 glass-effect">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="#" class="text-xl font-bold text-white z-50 flex items-center space-x-3">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="logo.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
                 <span>Bitcoin II</span>
             </a>
             <div id="desktop-nav" class="hidden md:flex items-center space-x-8">
@@ -434,7 +434,7 @@
     <footer class="bg-black py-12">
         <div class="container mx-auto px-6 text-center text-gray-500">
              <a href="#" class="inline-block mb-4">
-                <img src="https://raw.githubusercontent.com/Kode-design/BitcoinII-Website/refs/heads/main/20250708_2139_Stylish%20Bitcoin%20Icon_remix_01jznw5j88eebvz7sa7dx921hg.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
+                <img src="logo.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
             </a>
             <p>&copy; 2025 Bitcoin II. A Community Project.</p>
         </div>
@@ -591,19 +591,14 @@
                 renderer.setPixelRatio(window.devicePixelRatio);
 
                 const geometry = new THREE.CylinderGeometry(5, 5, 1, 64);
-                const textCanvas = document.createElement('canvas');
-                textCanvas.width = 256; textCanvas.height = 256;
-                const textCtx = textCanvas.getContext('2d');
-                textCtx.fillStyle = '#DAA520'; textCtx.fillRect(0, 0, 256, 256);
-                textCtx.font = 'bold 128px Inter'; textCtx.fillStyle = 'rgba(0,0,0,0.5)';
-                textCtx.textAlign = 'center'; textCtx.textBaseline = 'middle';
-                textCtx.fillText('BII', 128, 128);
-                const faceTexture = new THREE.CanvasTexture(textCanvas);
+                const loader = new THREE.TextureLoader();
+                loader.crossOrigin = '';
+                const faceTexture = loader.load('logo.png');
 
                 const materials = [
-                    new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.3 }),
-                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 }),
-                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.8, roughness: 0.3 })
+                    new THREE.MeshStandardMaterial({ color: 0xf7931a, metalness: 0.6, roughness: 0.4 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 }),
+                    new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 })
                 ];
                 const coin = new THREE.Mesh(geometry, materials);
                 scene.add(coin);
