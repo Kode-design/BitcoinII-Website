@@ -26,6 +26,7 @@
             animation: gradientMove 30s ease infinite;
             color: #1a1a1a;
         }
+<<<<<<< 0swimq-codex/upgrade-website-design-and-code-organization
         #loading-screen {
             background: #000;
             transition: opacity 1s ease;
@@ -33,6 +34,8 @@
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .animate-spin-slow { animation: spinSlow 8s linear infinite; }
+=======
+>>>>>>> main
         .spotlight {
             position: fixed;
             top: 0;
@@ -210,6 +213,10 @@
             background: none;
             -webkit-text-fill-color: #1a1a1a;
             text-shadow: none;
+        }
+        body.light .hero-title {
+            background: none;
+            -webkit-text-fill-color: #1a1a1a;
         }
         .terminal-window {
             background-color: #0D1117;
@@ -700,13 +707,21 @@
                 renderer.setSize(300, 300);
                 renderer.setPixelRatio(window.devicePixelRatio);
 
+<<<<<<< 0swimq-codex/upgrade-website-design-and-code-organization
                 const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 128);
+=======
+                const geometry = new THREE.CylinderGeometry(5, 5, 1, 64);
+>>>>>>> main
                 const loader = new THREE.TextureLoader();
                 loader.crossOrigin = '';
                 const faceTexture = loader.load('logo.png');
 
                 const materials = [
+<<<<<<< 0swimq-codex/upgrade-website-design-and-code-organization
                     new THREE.MeshStandardMaterial({ color: 0xffc65a, metalness: 0.8, roughness: 0.3 }),
+=======
+                    new THREE.MeshStandardMaterial({ color: 0xf7931a, metalness: 0.6, roughness: 0.4 }),
+>>>>>>> main
                     new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 }),
                     new THREE.MeshStandardMaterial({ map: faceTexture, metalness: 0.6, roughness: 0.4 })
                 ];
