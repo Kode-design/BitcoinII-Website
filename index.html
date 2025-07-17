@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitcoin II - A Second Chance</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -26,6 +26,13 @@
             animation: gradientMove 30s ease infinite;
             color: #1a1a1a;
         }
+        #loading-screen {
+            background: #000;
+            transition: opacity 1s ease;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spinSlow 8s linear infinite; }
         .spotlight {
             position: fixed;
             top: 0;
@@ -319,6 +326,11 @@
     </style>
 </head>
 <body class="antialiased">
+    <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center text-white z-50 opacity-100">
+        <img src="logo.png" alt="Loading Logo" class="w-24 h-24 mb-4 animate-spin-slow">
+        <h1 class="font-orbitron text-4xl mb-2">Bitcoin II</h1>
+        <p id="loading-hint" class="text-gray-400 text-lg px-6 text-center"></p>
+    </div>
     <div class="spotlight"></div>
 
     <!-- Header -->
@@ -527,6 +539,7 @@
             }
 
             // --- INITIALIZATION ---
+            initLoadingScreen();
             initSpotlightEffect();
             initScrollAnimations();
             initNumberTicker();
@@ -539,6 +552,22 @@
             initThemeToggle();
 
             // --- FUNCTION DEFINITIONS ---
+
+            function initLoadingScreen() {
+                const hints = [
+                    'Use the theme button to switch modes.',
+                    'Double-click the coin to pause its spin.',
+                    'Tap a stat card to reveal numbers.'
+                ];
+                const hintEl = select('#loading-hint');
+                hintEl.innerText = hints[Math.floor(Math.random() * hints.length)];
+                setTimeout(() => {
+                    const screen = select('#loading-screen');
+                    screen.style.opacity = '0';
+                    screen.style.pointerEvents = 'none';
+                    setTimeout(() => screen.remove(), 1000);
+                }, 5000);
+            }
 
             function initSpotlightEffect() {
                 const spotlight = select('.spotlight');

@@ -12,6 +12,7 @@ This repository contains the promotional website for the Bitcoin II project. The
 - Animated gradient background
 - Pause the 3D coin by double-clicking it
 - Improved light theme with readable colors
+- Initial loading screen with random hints
 
 ## Usage
 
