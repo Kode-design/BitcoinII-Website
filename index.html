@@ -4,10 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitcoin II - A Second Chance</title>
+
+    <meta name="description" content="The BitcoinII Community Website"/>
+    <meta property="og:image" content="https://bitcoiniicore.org/banner2.png"/>
+    <meta property="og:image:type" content="image/png"/>
+    <meta property="og:image:width" content="500"/>
+    <meta property="og:image:height" content="125"/>
+    <meta property="og:description" content="The BitcoinII Community Website"/>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@bitcoinII">
+    <meta name="twitter:creator" content="@bitcoinII">
+    <meta name="twitter:title" content="BitcoinII (BC2)">
+    <meta name="twitter:description" content="The BitcoinII Community Website"/>
+    <meta name="twitter:image" content="https://bitcoiniicore.org/banner2.png"/>
+    <meta name="twitter:domain" content="bitcoiniicore.org">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link id="canonical" rel="canonical" href="https://bitcoiniicore.org">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileColor" content="#000000">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
         html {
             scroll-behavior: smooth;
@@ -89,14 +116,14 @@
             inset: 0;
             background: radial-gradient(#ffffff44 1px, transparent 1px);
             background-size: 6px 6px;
-            animation: twinkle 3s ease-in-out infinite, rotateStars 40s linear infinite;
+            animation: twinkle 1.5s ease-in-out infinite, rotateStars 80s linear infinite;
             pointer-events: none;
         }
         @keyframes rotateStars { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         #loading-logo {
             width: 120px;
             height: 120px;
-            animation: bounceIn 1s ease forwards;
+            animation: bounceIn 2.5s ease forwards;
             opacity: 0;
         }
         @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
@@ -117,7 +144,7 @@
             border-radius: 9999px;
         }
         #loading-bar-inner.start {
-            animation: loadingProgress 5s linear forwards, moveStripe 1s linear infinite, pulseBar 2s ease-in-out infinite;
+            animation: loadingProgress 1.5s linear forwards, moveStripe 1s linear infinite, pulseBar 1s ease-in-out infinite;
         }
         #loading-percent {
             text-shadow: 0 0 6px rgba(0,0,0,0.4);
@@ -456,7 +483,7 @@
     <!-- Header -->
     <header class="fixed w-full top-0 z-50 glass-effect">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-white z-50 flex items-center space-x-3">
+            <a href="/" class="text-xl font-bold text-white z-50 flex items-center space-x-3">
                 <img src="logo.png" alt="Bitcoin II Logo" class="h-12 w-12 rounded-full">
                 <span>Bitcoin II</span>
             </a>
@@ -464,12 +491,14 @@
                 <a href="#about" class="nav-link text-gray-300 hover:text-amber-500 transition">Discover</a>
                 <a href="#explorer" class="nav-link text-gray-300 hover:text-amber-500 transition">Explorer</a>
                 <a href="#tech" class="nav-link text-gray-300 hover:text-amber-500 transition">Tech Specs</a>
-                <a href="#mining" class="nav-link text-gray-300 hover:text-amber-500 transition">Mining</a>
+                <!-- <a href="#mining" class="nav-link text-gray-300 hover:text-amber-500 transition">Mining</a> -->
                 <a href="#community" class="nav-link text-gray-300 hover:text-amber-500 transition">Community</a>
+                <a href="https://bitcoinii.ddns.net/NodeMap.html" target="_blank" class="nav-link text-gray-300 hover:text-amber-500 transition">NodeMap</a>
+                <a href="BitcoinII_Whitepaper.pdf" target="_blank" class="nav-link text-gray-300 hover:text-amber-500 transition">Whitepaper</a>
             </div>
             <div class="flex items-center space-x-4">
-                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg">
-                    Get Wallet
+                <a href="https://play.google.com/store/apps/details?id=network.bitcoinii.bluewallet" target="_blank" rel="noopener noreferrer" class="hidden md:block btn-primary font-bold py-2 px-6 rounded-lg" style="background:none">
+                    <img src="google_store.png" style="width:150px">
                 </a>
                 <button id="theme-toggle" aria-label="Toggle theme" class="text-white focus:outline-none text-xl">
                     <i class="fas fa-moon"></i>
@@ -486,10 +515,12 @@
         <a href="#about" class="block text-white text-lg py-3 hover:text-amber-500 transition">Discover</a>
         <a href="#explorer" class="block text-white text-lg py-3 hover:text-amber-500 transition">Explorer</a>
         <a href="#tech" class="block text-white text-lg py-3 hover:text-amber-500 transition">Tech Specs</a>
-        <a href="#mining" class="block text-white text-lg py-3 hover:text-amber-500 transition">Mining</a>
+        <!-- <a href="#mining" class="block text-white text-lg py-3 hover:text-amber-500 transition">Mining</a> -->
         <a href="#community" class="block text-white text-lg py-3 hover:text-amber-500 transition">Community</a>
-        <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="mt-6 block btn-primary text-center font-bold py-3 px-6 rounded-lg">
-            Get Wallet
+        <a href="https://bitcoinii.ddns.net/NodeMap.html" target="_blank" class="block text-white text-lg py-3 hover:text-amber-500 transition">NodeMap</a>
+        <a href="BitcoinII_Whitepaper.pdf" target="_blank" class="block text-white text-lg py-3 hover:text-amber-500 transition">Whitepaper</a>
+        <a href="https://play.google.com/store/apps/details?id=network.bitcoinii.bluewallet" target="_blank" rel="noopener noreferrer" class="mt-6 block btn-primary text-center font-bold py-3 px-6 rounded-lg" style="background:none">
+            <img src="google_store.png" style="width:150px">
         </a>
     </div>
 
@@ -504,14 +535,15 @@
                 Satoshi Nakamoto is often credited with saying, "It might make sense to get some in case it catches on." Many people wish they could have been mining Bitcoin since 2009. Absent a working time machine, this is the best chance at a second chance that we can provide.
             </p>
             <div class="flex justify-center space-x-4">
-                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">Get Started</a>
+                <a href="https://github.com/Bitcoin-II/BitcoinII-Core" target="_blank" rel="noopener noreferrer" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">Get Started</a>
                 <a href="#about" class="btn-secondary font-bold py-3 px-8 rounded-lg text-lg">Learn More</a>
             </div>
         </div>
     </main>
     
     <!-- Live Stats Section -->
-    <section id="stats" class="py-12 scroll-reveal">
+<!--
+     <section id="stats" class="py-12 scroll-reveal">
         <div class="container mx-auto px-6">
             <div class="flex justify-center">
                 <div class="stat-card p-6 rounded-lg glass-effect text-center w-full max-w-xs">
@@ -522,13 +554,27 @@
             </div>
         </div>
     </section>
+-->
+     <section id="stats" class="py-12 scroll-reveal">
+       <div class="container mx-auto px-6">
+         <div class="flex justify-center">
+           <div class="stat-card p-6 rounded-lg glass-effect text-center w-full max-w-xs">
+             <p class="text-gray-400 text-lg">Current Price</p>
+             <p class="text-4xl md:text-5xl font-bold text-white my-2">
+               $<span id="live-price">0.00</span>
+             </p>
+             <p id="price-timestamp" class="text-xs text-gray-500 mt-2">Loading timestamp...</p>
+           </div>
+         </div>
+       </div>
+     </section>
 
     <!-- Explorer Section -->
     <section id="explorer" class="py-20 bg-black bg-opacity-20 scroll-reveal">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-4xl font-bold text-white">Blockchain Explorer</h2>
             <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">View transactions, blocks, and network statistics in real-time on the Bitcoin II blockchain.</p>
-            <a href="https://bitcoinii.ddns.net/" target="_blank" rel="noopener noreferrer" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">
+            <a href="https://bitcoinii.space" target="_blank" rel="noopener noreferrer" class="btn-primary font-bold py-3 px-8 rounded-lg text-lg">
                 <i class="fas fa-search mr-2"></i>Launch Explorer
             </a>
         </div>
@@ -573,6 +619,7 @@
     </section>
     
     <!-- How to Mine Section -->
+<!-- 
     <section id="mining" class="py-20 scroll-reveal">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
@@ -606,6 +653,7 @@
             </div>
         </div>
     </section>
+-->
 
     <!-- Community Section -->
     <section id="community" class="py-20 scroll-reveal">
@@ -613,11 +661,17 @@
             <h2 class="text-4xl font-bold text-white">The Power of Community</h2>
             <p class="text-gray-400 mt-4 mb-10 max-w-2xl mx-auto">The future is in your hands. The BitcoinII project needs volunteers: Node Operators, DNS Seed Server Operators, Miners, and more. If you would like to volunteer, reach out to us down below!</p>
             <div class="flex justify-center items-center space-x-6 md:space-x-8">
-                <a href="https://discord.gg/zUSkQHNVyG" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-discord text-5xl"></i></a>
-                <a href="https://x.com/bc2org" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-twitter text-5xl"></i></a>
+                <a href="https://discord.gg/bitcoinii" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-discord text-5xl"></i></a>
+                <a href="https://x.com/TheBitcoinIIOrg" target="_blank" rel="noopener noreferrer"
+                   class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1227"
+                       class="w-12 h-12 fill-current">
+                    <path d="M752.12 496.59L1166.4 0H1061.5L707.38 429.25 428.72 0H0l437.36 651.37L0 1227h104.9l375.44-454.41L789.28 1227H1200z"/>
+                  </svg>
+                </a>
                 <a href="https://www.reddit.com/r/BitcoinII/" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-reddit-alien text-5xl"></i></a>
-                <a href="https://t.me/+mc19GB_d5yo3Yjg5" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-telegram text-5xl"></i></a>
-                <a href="https://github.com/BitcoinII-Dev/BitcoinII" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-github text-5xl"></i></a>
+                <a href="https://t.me/BitcoinIIOrganization" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-telegram text-5xl"></i></a>
+                <a href="https://github.com/Bitcoin-II" target="_blank" rel="noopener noreferrer" class="social-icon text-gray-400 hover:text-amber-500 transition-colors duration-300"><i class="fab fa-github text-5xl"></i></a>
             </div>
         </div>
     </section>
@@ -636,7 +690,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // --- REUSABLE FUNCTIONS ---
             const select = (el, all = false) => {
                 if (typeof el !== 'string') return el;
                 el = el.trim();
@@ -711,17 +764,29 @@
                 const percentEl = select('#loading-percent');
                 let progressInterval;
                 const barInner = select('#loading-bar-inner');
+
                 const tryStart = () => {
                     if (pageLoaded && !timerStarted) {
                         timerStarted = true;
-                        if (barInner) barInner.classList.add('start');
+                        if (barInner) {
+                            barInner.style.width = '50%'; // Instantly set to 50%
+                            setTimeout(() => {
+                                barInner.classList.add('start');  // Enable transition
+                                barInner.style.width = '100%';    // Animate to 100%
+                            }, 50); // Let browser apply initial width before transition
+                        }
                         const start = Date.now();
+                        const duration = 1500; // 1.5 seconds
+                        const startPct = 50;
+                        const endPct = 100;
                         progressInterval = setInterval(() => {
-                            const pct = Math.min(100, Math.round(((Date.now() - start) / 5000) * 100));
+                            const elapsed = Date.now() - start;
+                            const progress = Math.min(1, elapsed / duration);
+                            const pct = Math.round(startPct + (endPct - startPct) * progress);
                             if (percentEl) percentEl.innerText = pct + '%';
-                            if (pct >= 100) clearInterval(progressInterval);
-                        }, 100);
-                        setTimeout(hideScreen, 5000);
+                            if (pct >= endPct) clearInterval(progressInterval);
+                        }, 50);
+                        setTimeout(hideScreen, duration + 0); // optional buffer
                     }
                 };
                 if (pageLoaded) tryStart();
@@ -774,7 +839,7 @@
 
             function animateNumber(element) {
                 const target = parseFloat(element.getAttribute('data-target'));
-                const duration = 2000;
+                const duration = 1500;
                 let start = 0;
                 const stepTime = 33;
                 const steps = duration / stepTime;
@@ -869,15 +934,15 @@
                 const coinCanvas = select('#coin-canvas');
                 if (!coinCanvas) return;
                 const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
+                const camera = new THREE.PerspectiveCamera(75, 500 / 500, 0.1, 1000);
                 const renderer = new THREE.WebGLRenderer({ canvas: coinCanvas, alpha: true });
-                renderer.setSize(300, 300);
+                renderer.setSize(500, 500);
                 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
-                const geometry = new THREE.CylinderGeometry(5, 5, 1.5, 128);
+                const geometry = new THREE.CylinderGeometry(5, 5, 0.35, 128);
                 const loader = new THREE.TextureLoader();
                 loader.crossOrigin = '';
-                const faceTexture = loader.load('logo.png');
+                const faceTexture = loader.load('logo3.png');
 
                 const materials = [
                     new THREE.MeshStandardMaterial({ color: 0xf7931a, metalness: 0.8, roughness: 0.3 }),
@@ -1029,5 +1094,70 @@
             }
         });
     </script>
+
+    <script>
+    (function () {
+      function log(...args) {
+        console.log('[BC2]', ...args);
+      }
+
+      async function updatePrice() {
+        const priceEl = document.getElementById('live-price');
+        const timeEl = document.getElementById('price-timestamp');
+
+        if (!priceEl || !timeEl) {
+          log(' Missing #live-price or #price-timestamp in DOM.');
+          return;
+        }
+
+        const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoinii&vs_currencies=usd';
+        log('Fetching from:', url);
+
+        try {
+          const res = await fetch(url);
+          log('Fetch status:', res.status);
+
+          if (!res.ok) throw new Error('Non-200 response: ' + res.status);
+
+          const data = await res.json();
+          log('JSON:', data);
+
+          const rawPrice = data.bitcoinii?.usd;
+          log('Raw price from API:', rawPrice);
+
+          const parsed = parseFloat(rawPrice);
+          if (isNaN(parsed)) {
+            throw new Error(' Parsed value is NaN: ' + rawPrice);
+          }
+
+          priceEl.textContent = parsed.toFixed(3);
+
+          const now = new Date();
+          timeEl.textContent = now.toLocaleString('en-GB', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
+          });
+
+          log('Price and timestamp updated');
+        } catch (err) {
+          log('Error during fetch or update:', err);
+          priceEl.textContent = '--';
+          timeEl.textContent = 'Failed to fetch price';
+        }
+      }
+
+      // Delay until absolutely everything is ready
+      window.addEventListener('load', () => {
+        log(' Page fully loaded. Starting price update...');
+        updatePrice();
+      });
+    })();
+    </script>
+
 </body>
 </html>
